@@ -28,7 +28,6 @@ click==8.3.1
 click-plugins==1.1.1
 cloudscraper==1.2.71
 colorama==0.4.6
-command-not-found==0.3
 cryptography==46.0.5
 cssselect2==0.9.0
 cupshelpers==1.0
@@ -36,7 +35,6 @@ dbus-python==1.2.18
 decorator==5.2.1
 defer==1.0.6
 distro==1.7.0
-distro-info==1.1+ubuntu0.2
 dj-database-url==3.1.2
 Django==5.2.12
 dnspython==2.8.0
@@ -180,8 +178,6 @@ typing_extensions==4.15.0
 tzdata==2025.3
 tzlocal==5.3.1
 ubuntu-drivers-common==0.0.0
-ufw==0.36.1
-unattended-upgrades==0.1
 uritools==6.0.1
 urllib3==1.26.5
 userpath==1.8.0
