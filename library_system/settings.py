@@ -36,6 +36,9 @@ ALLOWED_HOSTS = [
     'localhost'
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://library-management-system-django-s1rc.onrender.com'
+]
 
 # Application definition
 
