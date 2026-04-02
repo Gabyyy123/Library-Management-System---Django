@@ -1,0 +1,496 @@
+[
+{
+    "model": "catalog.userprofile",
+    "pk": 1,
+    "fields": {
+        "user": 1,
+        "role": "admin",
+        "id_number": "LIB-ADMIN-01",
+        "profile_photo": "profiles/97951be8-c60a-4bdc-bbda-4fa82ab6cb04_ijOIsO9.jpeg"
+    }
+},
+{
+    "model": "catalog.userprofile",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "role": "student",
+        "id_number": "BSIT-2026-JUAN",
+        "profile_photo": "profiles/87ba9e01-336d-43a6-adeb-2210391a911c.jpeg"
+    }
+},
+{
+    "model": "catalog.userprofile",
+    "pk": 3,
+    "fields": {
+        "user": 3,
+        "role": "student",
+        "id_number": "BSIT-2026-MARIE",
+        "profile_photo": "profiles/claire4-removebg-preview.png"
+    }
+},
+{
+    "model": "catalog.userprofile",
+    "pk": 4,
+    "fields": {
+        "user": 4,
+        "role": "admin",
+        "id_number": "LIB-ADMIN-02",
+        "profile_photo": "profiles/7f7c4f3f-4732-4d71-8036-4614e6132e03_RKA8jUd.jpeg"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Cybersecurity"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Programming"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "IT Fiction"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 1,
+    "fields": {
+        "book_id": "B-001",
+        "title": "Penetration Testing",
+        "author": "Georgia Weidman",
+        "category": 1,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 2,
+    "fields": {
+        "book_id": "B-002",
+        "title": "Web Hacker's Handbook",
+        "author": "Dafydd Stuttard",
+        "category": 1,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 3,
+    "fields": {
+        "book_id": "B-003",
+        "title": "Metasploit Guide",
+        "author": "David Kennedy",
+        "category": 1,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 4,
+    "fields": {
+        "book_id": "B-004",
+        "title": "Black Hat Python",
+        "author": "Justin Seitz",
+        "category": 1,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 5,
+    "fields": {
+        "book_id": "B-005",
+        "title": "Social Engineering",
+        "author": "Christopher Hadnagy",
+        "category": 1,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 6,
+    "fields": {
+        "book_id": "B-006",
+        "title": "Python Crash Course",
+        "author": "Eric Matthes",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 7,
+    "fields": {
+        "book_id": "B-007",
+        "title": "Fluent Python",
+        "author": "Luciano Ramalho",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 8,
+    "fields": {
+        "book_id": "B-008",
+        "title": "JavaScript: Good Parts",
+        "author": "Douglas Crockford",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 9,
+    "fields": {
+        "book_id": "B-009",
+        "title": "Django for Beginners",
+        "author": "William S. Vincent",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 10,
+    "fields": {
+        "book_id": "B-010",
+        "title": "Clean Code",
+        "author": "Robert C. Martin",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 11,
+    "fields": {
+        "book_id": "B-011",
+        "title": "Neuromancer",
+        "author": "William Gibson",
+        "category": 3,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 12,
+    "fields": {
+        "book_id": "B-012",
+        "title": "Snow Crash",
+        "author": "Neal Stephenson",
+        "category": 3,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 13,
+    "fields": {
+        "book_id": "B-013",
+        "title": "Ready Player One",
+        "author": "Ernest Cline",
+        "category": 3,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 14,
+    "fields": {
+        "book_id": "B-014",
+        "title": "The Martian",
+        "author": "Andy Weir",
+        "category": 3,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 15,
+    "fields": {
+        "book_id": "B-015",
+        "title": "Daemon",
+        "author": "Daniel Suarez",
+        "category": 3,
+        "status": "Borrowed"
+    }
+},
+{
+    "model": "catalog.book",
+    "pk": 16,
+    "fields": {
+        "book_id": "B-021",
+        "title": "JavaScript 101",
+        "author": "Gabrillo",
+        "category": 2,
+        "status": "Available"
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 1,
+    "fields": {
+        "book": 10,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-02-03",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 2,
+    "fields": {
+        "book": 15,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 3,
+    "fields": {
+        "book": 4,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-02-09",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 5,
+    "fields": {
+        "book": 3,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-02-03",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 290
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 6,
+    "fields": {
+        "book": 10,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 7,
+    "fields": {
+        "book": 4,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-03-30",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 8,
+    "fields": {
+        "book": 5,
+        "user": 3,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-02-26",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 175
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 9,
+    "fields": {
+        "book": 1,
+        "user": 3,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 10,
+    "fields": {
+        "book": 13,
+        "user": 3,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 11,
+    "fields": {
+        "book": 3,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2025-12-30",
+        "is_returned": true,
+        "return_date": "2026-04-02",
+        "final_penalty": 465
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 12,
+    "fields": {
+        "book": 12,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2025-12-29",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 13,
+    "fields": {
+        "book": 2,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 14,
+    "fields": {
+        "book": 15,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 15,
+    "fields": {
+        "book": 1,
+        "user": 2,
+        "borrow_date": "2026-04-02",
+        "due_date": "2026-04-09",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.borrowrecord",
+    "pk": 16,
+    "fields": {
+        "book": 11,
+        "user": 3,
+        "borrow_date": "2026-04-02",
+        "due_date": "2025-12-29",
+        "is_returned": false,
+        "return_date": null,
+        "final_penalty": 0
+    }
+},
+{
+    "model": "catalog.computer",
+    "pk": 1,
+    "fields": {
+        "name": "PC Station 1",
+        "status": "Available",
+        "current_user": null,
+        "time_started": null
+    }
+},
+{
+    "model": "catalog.computer",
+    "pk": 2,
+    "fields": {
+        "name": "PC Station 2",
+        "status": "Available",
+        "current_user": null,
+        "time_started": null
+    }
+},
+{
+    "model": "catalog.computer",
+    "pk": 3,
+    "fields": {
+        "name": "PC Station 3",
+        "status": "Available",
+        "current_user": null,
+        "time_started": null
+    }
+},
+{
+    "model": "catalog.computer",
+    "pk": 4,
+    "fields": {
+        "name": "PC Station 4",
+        "status": "Available",
+        "current_user": null,
+        "time_started": null
+    }
+},
+{
+    "model": "catalog.meetingroomschedule",
+    "pk": 1,
+    "fields": {
+        "user": 2,
+        "date": "2026-04-08",
+        "time_slot": "10:00 am - 12:00nn",
+        "purpose": "AWS meeting",
+        "status": "Completed"
+    }
+},
+{
+    "model": "catalog.meetingroomschedule",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "date": "2026-04-10",
+        "time_slot": "10:00 am - 12:00nn",
+        "purpose": "AWS meeting",
+        "status": "Completed"
+    }
+}
+]
