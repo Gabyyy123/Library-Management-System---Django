@@ -53,7 +53,6 @@ future==1.0.0
 future-annotations==1.0.0
 geographiclib==2.1
 geopy==2.4.1
-ghunt @ file:///home/johnlloydgabrillo/GHunt
 google==3.0.0
 gpg==1.16.0
 graphemeu==0.7.2
