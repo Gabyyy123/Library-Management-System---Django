@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Meeting Manager</title>
+    
+    <!-- External Scripts & Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary);">No IMG</div>{% endif %}
+            <h2 style="margin: 0; color:#fff; font-size: 18px;">{{ user.username }}</h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+        </div>
+        <div class="sidebar-nav-container">
+            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
+            <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
+            <a href="{% url 'admin_meetings' %}" class="nav-link active"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+            <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+            <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
+            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color:#fca5a5; margin-top:10px;" onclick="confirmAction(event, 'Logout?', 'End session?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">Meeting Rooms</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Room reservations.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+        </header>
+
+        <main class="scrollable-content">
+            <div class="card">
+                <h2 style="margin-top:0; font-size:18px;"><i class="fa-solid fa-users"></i> Active Meetings</h2>
+                <div class="table-responsive">
+                    <table>
+                        <tr><th>Date/Time</th><th>User & ID</th><th>Purpose</th><th>Action</th></tr>
+                        {% for m in active_meetings %}
+                        <tr>
+                            <td><strong>{{ m.date|date:'M d, Y' }}</strong><br><span style="font-size:12px; color:var(--text-secondary);">{{ m.time_slot }}</span></td>
+                            <td><strong>{{ m.user.username }}</strong><br><span style="font-size:12px; color:var(--text-secondary);">ID: {{ m.user.userprofile.id_number }}</span></td>
+                            <td>{{ m.purpose }}</td>
+                            <td><a href="{% url 'complete_meeting' m.id %}" class="btn btn-success" onclick="confirmAction(event, 'Complete?', 'Has this meeting finished?', 'Done', '#10b981')">Mark Done</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" style="text-align:center; padding:30px; color:var(--text-secondary);">No active meetings.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'info', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+</body>
+</html>

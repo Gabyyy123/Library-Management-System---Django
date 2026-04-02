@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>System Admin</title>
+    
+    <!-- External Scripts & Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
+            <h2 style="margin: 0; color:#fff; font-size: 18px;">{{ user.username }}</h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+        </div>
+        <div class="sidebar-nav-container">
+            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
+            <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
+            <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+            <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+            <a href="{% url 'admin_management' %}" class="nav-link active"><i class="fa-solid fa-gears"></i> Manage</a>
+            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color:#fca5a5; margin-top:10px;" onclick="confirmAction(event, 'Logout?', 'End session?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">System Tools</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Manage users and books.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+        </header>
+
+        <main class="scrollable-content">
+            <div class="grid-3">
+                <div class="card" style="margin-bottom:0;">
+                    <h2 style="margin-top:0;"><i class="fa-solid fa-user-plus"></i> Add User</h2>
+                    <form method="POST" action="{% url 'add_user' %}" onsubmit="confirmSubmit(event, this, 'Add User?', 'Confirm account?', 'Register', '#4f46e5')">
+                        {% csrf_token %}
+                        <input type="text" name="username" class="form-input" placeholder="Username" required>
+                        <input type="password" name="password" class="form-input" placeholder="Password" required>
+                        <input type="text" name="id_number" class="form-input" placeholder="School ID" required>
+                        <select name="role" class="form-input"><option value="student">Student</option><option value="admin">Librarian</option></select>
+                        <button type="submit" class="btn-submit">Register</button>
+                    </form>
+                </div>
+                <div class="card" style="margin-bottom:0;">
+                    <h2 style="margin-top:0;"><i class="fa-solid fa-key"></i> Reset Password</h2>
+                    <form method="POST" action="{% url 'reset_password' %}" onsubmit="confirmSubmit(event, this, 'Reset?', 'Override password?', 'Yes, Reset', '#f59e0b')">
+                        {% csrf_token %}
+                        <select name="user_id" class="form-input" required>
+                            <option value="" disabled selected>Select User...</option>
+                            {% for u in all_users %}<option value="{{ u.id }}">{{ u.username }}</option>{% endfor %}
+                        </select>
+                        <input type="password" name="new_password" class="form-input" placeholder="New Pass" required>
+                        <button type="submit" class="btn-submit" style="background:var(--warning); color:#000;">Override</button>
+                    </form>
+                </div>
+                <div class="card" style="margin-bottom:0;">
+                    <h2 style="margin-top:0;"><i class="fa-solid fa-book-medical"></i> Add Book</h2>
+                    <form method="POST" action="{% url 'add_book' %}" onsubmit="confirmSubmit(event, this, 'Add Book?', 'Add to catalog?', 'Yes, Add', '#10b981')">
+                        {% csrf_token %}
+                        <input type="text" name="book_id" class="form-input" placeholder="Book ID" required>
+                        <input type="text" name="title" class="form-input" placeholder="Title" required>
+                        <input type="text" name="author" class="form-input" placeholder="Author" required>
+                        <select name="category_id" class="form-input" required>
+                            <option value="" disabled selected>Select Category...</option>
+                            {% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="btn-submit" style="background:var(--success);">Add Book</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="margin-top:0;"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</h2>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+                    <span class="stats-badge" style="background: rgba(79, 70, 229, 0.1); color: var(--primary);">Total: {{ total_books }}</span>
+                    <span class="stats-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">Available: {{ available_books }}</span>
+                    <span class="stats-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Unavailable: {{ unavailable_books }}</span>
+                </div>
+
+                <!-- FIXED SEARCH BAR -->
+                <form method="GET" style="display:flex; gap:10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <input type="text" name="inventory_q" value="{{ inventory_q }}" class="form-input" style="margin-bottom:0; flex:1; min-width: 200px;" placeholder="Search Book Title or ID...">
+                    <button type="submit" class="btn-submit" style="width:auto; padding: 12px 25px;">Search</button>
+                    {% if inventory_q %}
+                        <a href="{% url 'admin_management' %}" class="btn-submit" style="width:auto; padding: 12px 25px; background:var(--text-secondary);">Clear</a>
+                    {% endif %}
+                </form>
+
+                <div class="table-responsive" style="max-height: 450px;">
+                    <table>
+                        <tr><th>ID</th><th>Title</th><th>Category</th><th>Status</th><th>Action</th></tr>
+                        {% for book in books %}
+                        <tr>
+                            <td><strong>{{ book.book_id }}</strong></td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.category.name }}</td>
+                            <td>
+                                {% if book.status == 'Available' %}<span style="color:var(--success); font-weight:bold;">🟢 {{ book.status }}</span>
+                                {% elif book.status == 'Unavailable' %}<span style="color:var(--text-secondary); font-weight:bold;">⚫ Maint.</span>
+                                {% else %}<span style="color:var(--danger); font-weight:bold;">🔴 {{ book.status }}</span>{% endif %}
+                            </td>
+                            <td>
+                                {% if book.status == 'Available' %}
+                                    <a href="{% url 'toggle_book_status' book.id %}" class="btn-toggle-off" onclick="confirmAction(event, 'Deactivate?', 'Pull book?', 'Yes', '#ef4444')">Disable</a>
+                                {% elif book.status == 'Unavailable' %}
+                                    <a href="{% url 'toggle_book_status' book.id %}" class="btn-toggle-on" onclick="confirmAction(event, 'Activate?', 'Return book?', 'Yes', '#10b981')">Enable</a>
+                                {% else %}
+                                    <span style="font-size:12px; color:var(--text-secondary);">In Circulation</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-secondary);">No books found matching your search.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'warning', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        function confirmSubmit(e, form, t, s, cT, cC) { e.preventDefault(); Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) form.submit(); }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+</body>
+</html>

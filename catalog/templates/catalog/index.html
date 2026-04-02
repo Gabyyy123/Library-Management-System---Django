@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management MVP</title>
+    <style>
+        /* Pure CSS - No frameworks used */
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --border: #dee2e6;
+            --primary: #0d6efd;
+            --danger: #dc3545;
+            --success: #198754;
+        }
+        body.dark-mode {
+            --bg-color: #212529;
+            --text-color: #f8f9fa;
+            --card-bg: #343a40;
+            --border: #495057;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            transition: 0.3s;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .controls-form {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-primary { background-color: var(--primary); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-success { background-color: var(--success); }
+        
+        .book-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .available { background: #d1e7dd; color: #0f5132; }
+        .borrowed { background: #f8d7da; color: #842029; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Library Catalog</h1>
+        <button id="darkModeToggle" class="btn-primary">Toggle Dark Mode</button>
+    </div>
+
+    <form method="GET" class="controls-form">
+        <input type="text" name="search" placeholder="Search title/author..." value="{{ request.GET.search }}">
+        <select name="status">
+            <option value="">All Books</option>
+            <option value="available" {% if request.GET.status == 'available' %}selected{% endif %}>Available</option>
+            <option value="borrowed" {% if request.GET.status == 'borrowed' %}selected{% endif %}>Borrowed</option>
+        </select>
+        <button type="submit" class="btn-primary">Search & Filter</button>
+    </form>
+
+    <form method="POST" class="controls-form">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Book Title" required>
+        <input type="text" name="author" placeholder="Author Name" required>
+        <button type="submit" class="btn-primary">Add Book</button>
+    </form>
+
+    <div>
+        {% for book in books %}
+            <div class="book-card">
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">{{ book.title }}</h3>
+                    <p style="margin: 0; color: gray;">by {{ book.author }}</p>
+                    <span class="status-badge {% if book.is_available %}available{% else %}borrowed{% endif %}">
+                        {% if book.is_available %}Available{% else %}Borrowed{% endif %}
+                    </span>
+                </div>
+                <div>
+                    <a href="{% url 'toggle_status' book.id %}">
+                        <button class="{% if book.is_available %}btn-primary{% else %}btn-success{% endif %}">
+                            {% if book.is_available %}Borrow{% else %}Return{% endif %}
+                        </button>
+                    </a>
+                    <a href="{% url 'delete_book' book.id %}">
+                        <button class="btn-danger">Delete</button>
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="book-card"><p>No books found.</p></div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Feature 3: Dark Mode Logic via Vanilla JavaScript
+    const toggleBtn = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
+</script>
+
+</body>
+</html>

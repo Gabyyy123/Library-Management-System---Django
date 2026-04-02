@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Library</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="profile-card">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo" alt="Profile">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); line-height: 100px; margin: auto;">No IMG</div>
+            {% endif %}
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+            <p style="color: var(--text-secondary);">{{ profile.get_role_display }} | ID: {{ profile.id_number|default:"N/A" }}</p>
+            <a href="{% url 'edit_profile' %}" class="btn">Edit Profile</a>
+            <a href="{% url 'logout' %}" class="btn" style="background: var(--danger);">Logout</a>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="main">
+        <div class="header">
+            <h1>Welcome, {{ user.username }}</h1>
+            <button id="themeToggle">🌙</button> <!-- Icon Only Toggle -->
+        </div>
+
+        <!-- LIBRARIAN VIEW -->
+        {% if profile.role == 'admin' %}
+            <h2>Active Borrow Records (Admin View)</h2>
+            <table>
+                <tr>
+                    <th>Student/Instructor</th>
+                    <th>Book Title</th>
+                    <th>Category</th>
+                    <th>Due Date</th>
+                    <th>Penalty Fee</th>
+                </tr>
+                {% for record in borrows %}
+                <tr>
+                    <td>{{ record.user.username }}</td>
+                    <td>{{ record.book.title }}</td>
+                    <td>{{ record.book.category.name }}</td>
+                    <td>{{ record.due_date }}</td>
+                    <td class="{% if record.penalty_fee > 0 %}penalty{% endif %}">
+                        ₱{{ record.penalty_fee }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        
+        <!-- STUDENT / INSTRUCTOR VIEW -->
+        {% else %}
+            <h2>My Borrowed Books</h2>
+            <table>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Due Date</th>
+                    <th>Penalty Fee</th>
+                </tr>
+                {% for record in my_borrows %}
+                <tr>
+                    <td>{{ record.book.title }}</td>
+                    <td>{{ record.due_date }}</td>
+                    <td class="{% if record.penalty_fee > 0 %}penalty{% endif %}">
+                        ₱{{ record.penalty_fee }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">You have no borrowed books.</td></tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    const toggleBtn = document.getElementById('themeToggle');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        toggleBtn.innerText = '☀️';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            toggleBtn.innerText = '☀️';
+        } else {
+            localStorage.setItem('theme', 'light');
+            toggleBtn.innerText = '🌙';
+        }
+    });
+</script>
+
+</body>
+</html>

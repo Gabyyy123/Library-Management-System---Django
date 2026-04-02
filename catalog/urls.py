@@ -1,0 +1,31 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
+    path('librarian/pcs/', views.admin_pcs, name='admin_pcs'),
+    path('librarian/meetings/', views.admin_meetings, name='admin_meetings'),
+    path('librarian/history/', views.admin_history, name='admin_history'),
+    path('librarian/management/', views.admin_management, name='admin_management'),
+    
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('browse/', views.browse_library, name='browse_library'),
+    path('borrow/<int:book_id>/', views.borrow_book, name='borrow_book'),
+    path('approve/<int:record_id>/', views.approve_borrow, name='approve_borrow'),
+    path('reject/<int:record_id>/', views.reject_borrow, name='reject_borrow'),
+    path('return/<int:record_id>/', views.return_book, name='return_book'),
+    path('edit-due-date/<int:record_id>/', views.edit_due_date, name='edit_due_date'),
+    path('book-room/', views.book_room, name='book_room'),
+    path('complete-meeting/<int:meeting_id>/', views.complete_meeting, name='complete_meeting'),
+    path('request-pc/<int:pc_id>/', views.request_pc, name='request_pc'),
+    path('approve-pc/<int:pc_id>/', views.approve_pc, name='approve_pc'),
+    path('reject-pc/<int:pc_id>/', views.reject_pc, name='reject_pc'),
+    path('stop-pc/<int:pc_id>/', views.stop_pc, name='stop_pc'),
+    path('add-user/', views.add_user, name='add_user'),
+    path('add-book/', views.add_book, name='add_book'),
+    path('toggle-book/<int:book_id>/', views.toggle_book_status, name='toggle_book_status'),
+    path('reset-password/', views.reset_password, name='reset_password'),
+]

@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Student Dashboard</title>
+    
+    <!-- External Scripts & Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
+            {% endif %}
+            <h2 style="margin: 0; font-size: 18px;">{{ user.username }}</h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+        </div>
+        <div class="sidebar-nav-container">
+            <a href="{% url 'dashboard' %}" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Are you sure you want to log out?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">Student Portal</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Welcome back.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+        </header>
+        <main class="scrollable-content">
+            <div class="card">
+                <h2 style="margin-top:0;"><i class="fa-solid fa-desktop"></i> PC Request</h2>
+                <div class="grid-2" style="margin-bottom:0;">
+                    {% for pc in computers %}
+                    <div class="pc-item">
+                        <strong style="font-size:16px;">{{ pc.name }}</strong>
+                        {% if pc.status == 'Available' %}<a href="{% url 'request_pc' pc.id %}" class="btn-submit" style="width: auto;" onclick="confirmAction(event, 'Request?', 'Book PC?', 'Request', '#3b82f6')">Request Access</a>
+                        {% elif pc.status == 'Requested' and pc.current_user == request.user %}<span style="color: var(--warning); font-weight:bold;">⏳ Pending Admin Approval</span>
+                        {% elif pc.status == 'In Use' and pc.current_user == request.user %}<span style="color: var(--success); font-weight:bold;">✅ Currently Active</span>
+                        {% else %}<span class="btn-submit btn-disabled" style="width: auto;">Unavailable</span>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Full width tables -->
+            <div class="card">
+                <h2 style="margin-top: 0;"><i class="fa-solid fa-book"></i> Active Books</h2>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th>Book Details</th>
+                            <th>Status</th>
+                            <th>Penalty <br><span style="font-size:10px; color:var(--text-secondary); text-transform:none; font-weight:normal;">(₱5.00/day for late returns)</span></th>
+                        </tr>
+                        {% for r in my_borrows %}
+                        <tr>
+                            <td><strong>{{ r.book.title }}</strong><br><span style="font-size:12px; color:var(--text-secondary);">{{ r.book.book_id }}</span></td>
+                            <td>{% if r.book.status == 'Pending' %}<span style="color: var(--warning); font-weight: bold;">⏳ Pending</span>{% else %}{{ r.due_date }}{% endif %}</td>
+                            <td style="color:var(--danger); font-weight:bold; font-size: 16px;">
+                                {% if r.penalty_fee > 0 %}₱{{ r.penalty_fee }}{% else %}<span style="color: #10b981;">No Fees</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" style="text-align: center; color: var(--text-secondary); padding: 30px;">No active books.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 style="margin-top: 0;"><i class="fa-solid fa-clock-rotate-left"></i> Borrowing History</h2>
+                <div class="table-responsive" style="max-height: 300px;">
+                    <table>
+                        <tr><th>Book Title</th><th>Returned On</th></tr>
+                        {% for r in my_history_borrows %}
+                        <tr>
+                            <td><strong>{{ r.book.title }}</strong></td>
+                            <td>{{ r.return_date|date:'M d, Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" style="text-align: center; color: var(--text-secondary); padding: 30px;">No history yet.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card" style="margin-bottom:0;">
+                    <h2 style="margin-top:0;"><i class="fa-solid fa-calendar"></i> Book Meeting Room</h2>
+                    <form method="POST" action="{% url 'book_room' %}" onsubmit="confirmSubmit(event, this, 'Confirm Booking?', 'Submit this meeting room request?', 'Yes, Book It', '#3b82f6')">
+                        {% csrf_token %}
+                        <input type="date" name="date" class="form-input" required>
+                        <input type="text" name="time_slot" class="form-input" placeholder="Time Slot (e.g. 10:00 AM - 12:00 PM)" required>
+                        <input type="text" name="purpose" class="form-input" placeholder="Purpose of Meeting" required>
+                        <button type="submit" class="btn-submit">Submit Appointment</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-bottom:0;">
+                    <h2 style="margin-top:0;"><i class="fa-solid fa-calendar-check"></i> My Appointments</h2>
+                    <div class="table-responsive" style="max-height: 250px;">
+                        <table>
+                            <tr><th>Date & Time</th><th>Status</th></tr>
+                            {% for m in my_meetings %}
+                            <tr>
+                                <td><strong>{{ m.date|date:'M d, Y' }}</strong><br><span style="font-size: 12px; color: var(--text-secondary);">{{ m.time_slot }}</span></td>
+                                <td style="color: var(--primary); font-weight:bold;">Upcoming</td>
+                            </tr>
+                            {% endfor %}
+                            {% for m in my_history_meetings %}
+                            <tr>
+                                <td><strong>{{ m.date|date:'M d, Y' }}</strong></td>
+                                <td style="color: var(--success); font-weight:bold;">Completed</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" style="text-align:center; padding:30px; color:var(--text-secondary);">No meeting requests.</td></tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        function confirmSubmit(e, form, t, s, cT, cC) { e.preventDefault(); Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) form.submit(); }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+</body>
+</html>

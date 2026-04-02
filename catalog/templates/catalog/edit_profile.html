@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Edit Profile</title>
+    
+    <!-- External Scripts & Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="{% if profile.role == 'admin' %}admin-mode{% endif %}">
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
+            {% endif %}
+            
+            <!-- THE FIX: The if statement is now outside the tag to prevent VS Code CSS errors -->
+            {% if profile.role == 'admin' %}
+                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+            {% else %}
+                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.username }}</h2>
+            {% endif %}
+            
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+        </div>
+
+        <div class="sidebar-nav-container">
+            {% if profile.role == 'admin' %}
+                <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
+                <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
+                <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+                <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+                <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+            {% endif %}
+            <a href="{% url 'edit_profile' %}" class="nav-link active"><i class="fa-solid fa-user-pen"></i> Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">Profile Settings</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Update ID and Image.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+        </header>
+
+        <main class="scrollable-content flex-center-top">
+            <div class="card profile-form-card">
+                <form method="POST" enctype="multipart/form-data" onsubmit="confirmSubmit(event, this, 'Save?', 'Update details?', 'Save', '#4f46e5')">
+                    {% csrf_token %}
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">Institution ID</label>
+                    <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input">
+                    
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">Profile Photo</label>
+                    <input type="file" name="profile_photo" class="form-input" style="padding: 10px;">
+                    
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                </form>
+            </div>
+        </main>
+    </div>
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        function confirmSubmit(e, form, t, s, cT, cC) { e.preventDefault(); Swal.fire({ title: t, text: s, icon: 'info', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) form.submit(); }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Library Login</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #1e293b, #0f172a, #3b82f6, #4f46e5); 
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; padding: 20px; box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); 
+            padding: 50px 40px; border-radius: 24px; 
+            width: 100%; max-width: 400px; text-align: center; 
+            box-sizing: border-box;
+            color: #ffffff;
+        }
+
+        .card h1 { color: #ffffff; margin: 0 0 5px 0; font-weight: 700; letter-spacing: 1px;}
+        .card p { color: #cbd5e1; margin-bottom: 30px; font-size: 15px;}
+        
+        .card label { display: block; text-align: left; color: #e2e8f0; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        
+        input { 
+            width: 100%; padding: 14px; margin-bottom: 20px; 
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            border-radius: 12px; outline: none; 
+            font-size: 15px; color: #ffffff; box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.5); }
+        input:focus { background: rgba(255, 255, 255, 0.1); border-color: #60a5fa; box-shadow: 0 0 50px rgba(96, 165, 250, 0.3); }
+
+        button { 
+            width: 100%; padding: 15px; 
+            background: rgba(14, 73, 236, 0.85); 
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; border-radius: 12px; font-weight: bold; 
+            cursor: pointer; margin-top: 10px; font-size: 16px; 
+            transition: 0.3s; box-sizing: border-box;
+        }
+        button:hover { background: rgb(10, 236, 22); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        
+        .forgot-note { margin-top: 25px; font-size: 13px; color: rgba(255, 255, 255, 0.6); line-height: 1.4; }
+
+        @media (max-width: 480px) {
+            .card { padding: 40px 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📚 Welcome</h1>
+        <p>Sign in to Library System</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Access Portal</button>
+        </form>
+        
+        <div class="forgot-note">
+            Forgot your password?<br>
+            Please present your ID to the <strong>Librarian</strong> to request an immediate password reset.
+        </div>
+    </div>
+</body>
+</html>
