@@ -117,3 +117,4 @@ body.admin-mode .nav-link:hover { background: var(--primary); color: white; }
 @media (max-width: 1024px) {
     .pc-item { flex-direction: column; gap: 15px; text-align: center; }
 }
+

@@ -17,6 +17,8 @@
 </head>
 <body>
     <div class="sidebar-overlay" id="overlay"></div>
+
+    
     <div class="sidebar" id="sidebar">
         <div class="profile-section">
             {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
