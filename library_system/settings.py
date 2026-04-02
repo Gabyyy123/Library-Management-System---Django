@@ -80,23 +80,19 @@ WSGI_APPLICATION = 'library_system.wsgi.application'
 
 if os.environ.get('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            ssl_require=True
-        )
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'library_db', # Put your local DB name here
-            'USER': 'postgres',    # Your local username
-            'PASSWORD': 'password123', # Your local password
+            'NAME': 'library_db',
+            'USER': 'postgres',
+            'PASSWORD': 'password123',
             'HOST': 'localhost',
             'PORT': '5432',
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
