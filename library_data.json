@@ -1,45 +1,5 @@
 [
 {
-    "model": "catalog.userprofile",
-    "pk": 1,
-    "fields": {
-        "user": 1,
-        "role": "admin",
-        "id_number": "LIB-ADMIN-01",
-        "profile_photo": "profiles/97951be8-c60a-4bdc-bbda-4fa82ab6cb04_ijOIsO9.jpeg"
-    }
-},
-{
-    "model": "catalog.userprofile",
-    "pk": 2,
-    "fields": {
-        "user": 2,
-        "role": "student",
-        "id_number": "BSIT-2026-JUAN",
-        "profile_photo": "profiles/87ba9e01-336d-43a6-adeb-2210391a911c.jpeg"
-    }
-},
-{
-    "model": "catalog.userprofile",
-    "pk": 3,
-    "fields": {
-        "user": 3,
-        "role": "student",
-        "id_number": "BSIT-2026-MARIE",
-        "profile_photo": "profiles/claire4-removebg-preview.png"
-    }
-},
-{
-    "model": "catalog.userprofile",
-    "pk": 4,
-    "fields": {
-        "user": 4,
-        "role": "admin",
-        "id_number": "LIB-ADMIN-02",
-        "profile_photo": "profiles/7f7c4f3f-4732-4d71-8036-4614e6132e03_RKA8jUd.jpeg"
-    }
-},
-{
     "model": "catalog.category",
     "pk": 1,
     "fields": {
