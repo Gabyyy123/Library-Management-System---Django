@@ -1,3 +1,9 @@
+import os  # This MUST be at the top
+import dj_database_url
+from pathlib import Path
+
+
+
 """
 Django settings for library_system project.
 
@@ -10,9 +16,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os
-import dj_database_url
-from pathlib import Path
 
 
 
@@ -141,7 +144,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+
+# This tells Django where to gather all static files for production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# This enables WhiteNoise to serve the files on Render
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (Profile photos)
