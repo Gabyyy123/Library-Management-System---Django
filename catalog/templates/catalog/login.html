@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,18 +28,45 @@
             border: 1px solid rgba(255, 255, 255, 0.15); 
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); 
             padding: 50px 40px; border-radius: 24px; 
-            width: 100%; max-width: 400px; text-align: center; 
+            width: 100%; max-width: 450px; text-align: center; 
             box-sizing: border-box;
             color: #ffffff;
         }
 
-        .card h1 { color: #ffffff; margin: 0 0 5px 0; font-weight: 700; letter-spacing: 1px;}
-        .card p { color: #cbd5e1; margin-bottom: 30px; font-size: 15px;}
+        /* --- NEW LOGO AND HEADER STYLES --- */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+      
+
+       .system-logo {
+            width: 100px; 
+            height: auto;
+            margin-bottom: 12px;
+            background: #ffffff; 
+            border-radius: 50%; 
+            padding: 8px; 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.15); 
+        }
+
+        .card h1 { 
+            color: #ffffff; 
+            margin: 0; 
+            font-weight: 600; 
+            letter-spacing: 1px;
+            font-size: 20px;
+        }
+        /* ---------------------------------- */
+
+        .card p { color: #cbd5e1; margin-bottom: 30px; font-size: 12px; margin-top: 10px;}
         
         .card label { display: block; text-align: left; color: #e2e8f0; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
         
         input { 
-            width: 100%; padding: 14px; margin-bottom: 20px; 
+            width: 100%; padding: 14px;; 
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2); 
             border-radius: 12px; outline: none; 
@@ -54,22 +82,30 @@
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white; border-radius: 12px; font-weight: bold; 
-            cursor: pointer; margin-top: 10px; font-size: 16px; 
+            cursor: pointer; margin-top: 10px; font-size: 16px;     
             transition: 0.3s; box-sizing: border-box;
         }
-        button:hover { background: rgb(10, 236, 22); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        button:hover { border: 3px solid rgb(rgb(15, 235, 44), green, blue); background-color: transparent;
+             transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); color: rgb(8, 218, 8);}
         
-        .forgot-note { margin-top: 25px; font-size: 13px; color: rgba(255, 255, 255, 0.6); line-height: 1.4; }
+        .forgot-note { margin-top: 25px; font-size: 13px; color: rgba(252, 249, 249, 0.6); line-height: 1.4; }
 
         @media (max-width: 480px) {
             .card { padding: 40px 25px; }
         }
     </style>
-</head>
+</head> 
 <body>
     <div class="card">
-        <h1>📚 Welcome</h1>
+        
+        <!-- Replaced Welcome text with Logo and System Name -->
+        <div class="logo-container">
+           <img src="{% static 'images/cec-logo.png' %}" alt="CEC Logo" class="system-logo">
+            <h1>CEC Library Management System</h1>
+        </div>
+        
         <p>Sign in to Library System</p>
+        
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
