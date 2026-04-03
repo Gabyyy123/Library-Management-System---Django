@@ -309,3 +309,47 @@ CEC Library System"""
 
     # This text will show up on the screen when the robot visits the link
     return HttpResponse(f"System Check Complete. Sent {emails_sent} reminder emails for books due on {tomorrow} using {settings.EMAIL_HOST_USER}.")
+
+
+@login_required
+def digital_id(request):
+    profile = request.user.userprofile
+    return render(request, 'catalog/digital_id.html', {'profile': profile, 'active_tab': 'digital_id'})
+
+@login_required
+def admin_user_logs(request):
+    # Security check: Only let Admins in
+    if request.user.userprofile.role != 'admin':
+        return redirect('dashboard')
+    
+    query = request.GET.get('q', '')
+    
+    # Get all users who are NOT admins
+    users = User.objects.exclude(userprofile__role='admin').order_by('username')
+    
+    # If admin typed in the search bar, filter the users
+    if query:
+        users = users.filter(
+            Q(username__icontains=query) | 
+            Q(first_name__icontains=query) | 
+            Q(last_name__icontains=query) | 
+            Q(userprofile__id_number__icontains=query)
+        )
+    
+    # Bundle each user with their last borrowed book to send to the HTML
+    user_logs = []
+    for u in users:
+        last_borrow = BorrowRecord.objects.filter(user=u).order_by('-borrow_date').first()
+        user_logs.append({
+            'user': u,
+            'profile': u.userprofile,
+            'last_borrow': last_borrow
+        })
+        
+    context = {
+        'profile': request.user.userprofile,
+        'active_tab': 'user_logs',
+        'user_logs': user_logs,
+        'query': query
+    }
+    return render(request, 'catalog/admin_user_logs.html', context)

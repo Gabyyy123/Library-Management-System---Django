@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin User Logs</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="admin-mode">
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
+            {% endif %}
+            <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">Admin</p>
+        </div>
+
+        <div class="sidebar-nav-container">
+            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
+            <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
+            <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+            <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+            <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
+            
+            <!-- USER LOGS LINK -->
+            <a href="{% url 'admin_user_logs' %}" class="nav-link active"><i class="fa-solid fa-users"></i> User Logs</a>
+            
+            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
+
+            <!-- NEW DIGITAL ID LINK ADDED HERE -->
+            <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">User Logs</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Track students and instructors.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+        </header>
+
+        <main class="scrollable-content">
+            <!-- Search Bar -->
+            <form method="GET" class="search-bar">
+                <input type="text" name="q" class="search-input" placeholder="Search by name, username, or ID number..." value="{{ query }}">
+                <button type="submit" style="padding:14px 25px; background:var(--primary); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:16px;">Search</button>
+            </form>
+
+            <div class="card">
+                <h2 style="margin-top: 0;"><i class="fa-solid fa-users"></i> All Users & Recent Activity</h2>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th>User Info</th>
+                            <th>Role</th>
+                            <th>Last Borrowed Book</th>
+                            <th>Status of Book</th>
+                        </tr>
+                        {% for log in user_logs %}
+                        <tr>
+                            <td>
+                                <strong>{{ log.user.first_name|default:log.user.username }} {{ log.user.last_name }}</strong><br>
+                                <span style="font-size:12px; color:var(--text-secondary);">ID: {{ log.profile.id_number|default:"N/A" }}</span>
+                            </td>
+                            
+                            <!-- THE FIX: Separated the Django Logic from the CSS Styles -->
+                            <td>
+                                {% if log.profile.role == 'instructor' %}
+                                    <span style="font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                                        INSTRUCTOR
+                                    </span>
+                                {% else %}
+                                    <span style="font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                                        STUDENT
+                                    </span>
+                                {% endif %}
+                            </td>
+                            
+                            {% if log.last_borrow %}
+                                <td>
+                                    <strong>{{ log.last_borrow.book.title }}</strong><br>
+                                    <span style="font-size:12px; color:var(--text-secondary);">Borrowed: {{ log.last_borrow.borrow_date|date:'M d, Y' }}</span>
+                                </td>
+                                <td>
+                                    {% if log.last_borrow.is_returned %}
+                                        <span style="color: var(--success); font-weight: bold;">Returned</span>
+                                    {% else %}
+                                        <span style="color: var(--warning); font-weight: bold;">Currently Borrowed</span>
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td colspan="2" style="color: var(--text-secondary); font-style: italic;">No borrowing history on record.</td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 30px;">No users found.</td></tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+</body>
+</html>

@@ -29,4 +29,6 @@ urlpatterns = [
     path('toggle-book/<int:book_id>/', views.toggle_book_status, name='toggle_book_status'),
     path('reset-password/', views.reset_password, name='reset_password'),
    path('trigger-reminders/', views.send_daily_reminders, name='send_daily_reminders'),
+path('digital-id/', views.digital_id, name='digital_id'),
+path('user-logs/', views.admin_user_logs, name='admin_user_logs'),
 ]

@@ -29,6 +29,10 @@
             <a href="{% url 'dashboard' %}" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a>
             <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
+            
+            <!-- NEW DIGITAL ID LINK ADDED HERE -->
+            <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+            
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Are you sure you want to log out?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
@@ -60,7 +64,7 @@
                 </div>
             </div>
 
-            <!-- NEW: AI-LITE RECOMMENDATION SECTION -->
+            <!-- AI-LITE RECOMMENDATION SECTION -->
             {% if recommended_books %}
             <div class="card" style="border-left: 4px solid var(--primary);">
                 <h2 style="margin-top:0;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Recommended for You</h2>
