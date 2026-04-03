@@ -9,9 +9,45 @@
     <!-- External Scripts & Fonts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
     <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Select2 Dark Mode Fixes -->
+    <style>
+        .select2-container--default .select2-selection--single {
+            background-color: #1e1e2f; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 48px; 
+            border-radius: 6px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #e2e8f0;
+            line-height: 48px;
+            padding-left: 15px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 46px;
+        }
+        .select2-dropdown {
+            background-color: #2a2a3b; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            background-color: #1e1e2f;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .select2-results__option {
+            color: #cbd5e1;
+        }
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: #60a5fa; 
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar-overlay" id="overlay"></div>
@@ -53,7 +89,7 @@
                         <input type="text" name="username" class="form-input" placeholder="Username" required>
                         <input type="password" name="password" class="form-input" placeholder="Password" required>
                         <input type="text" name="id_number" class="form-input" placeholder="School ID" required>
-                        <select name="role" class="form-input"><option value="student">Student</option><option value="admin">Librarian</option></select>
+                        <select name="role" class="form-input"><option value="student">Student</option><option value="instructor">Instructor</option><option value="admin">Librarian</option></select>
                         <button type="submit" class="btn-submit">Register</button>
                     </form>
                 </div>
@@ -61,10 +97,13 @@
                     <h2 style="margin-top:0;"><i class="fa-solid fa-key"></i> Reset Password</h2>
                     <form method="POST" action="{% url 'reset_password' %}" onsubmit="confirmSubmit(event, this, 'Reset?', 'Override password?', 'Yes, Reset', '#f59e0b')">
                         {% csrf_token %}
-                        <select name="user_id" class="form-input" required>
+                        
+                        <!-- ADDED class="searchable-select" HERE -->
+                        <select name="user_id" class="form-input searchable-select" required>
                             <option value="" disabled selected>Select User...</option>
                             {% for u in all_users %}<option value="{{ u.id }}">{{ u.username }}</option>{% endfor %}
                         </select>
+                        
                         <input type="password" name="new_password" class="form-input" placeholder="New Pass" required>
                         <button type="submit" class="btn-submit" style="background:var(--warning); color:#000;">Override</button>
                     </form>
@@ -133,6 +172,8 @@
             </div>
         </main>
     </div>
+
+    <!-- Scripts -->
     <script>
         function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'warning', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
         function confirmSubmit(e, form, t, s, cT, cC) { e.preventDefault(); Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) form.submit(); }); }
@@ -141,6 +182,21 @@
         overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
         if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
         document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+    </script>
+    
+    <!-- Load jQuery and Select2 engines -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Turn targeted dropdown into search bar -->
+    <script>
+        $(document).ready(function() {
+            // Targets only the select tag with the "searchable-select" class
+            $('.searchable-select').select2({
+                placeholder: "Search for a user...",
+                width: '100%' 
+            });
+        });
     </script>
 </body>
 </html>

@@ -118,3 +118,48 @@ body.admin-mode .nav-link:hover { background: var(--primary); color: white; }
     .pc-item { flex-direction: column; gap: 15px; text-align: center; }
 }
 
+/* --- Select2 Dark Mode Fixes --- */
+.select2-container--default .select2-selection--single {
+    background-color: #1e1e2f; /* Matches your dark inputs */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 48px; /* Keeps it the same height as other boxes */
+    border-radius: 6px;
+}
+
+/* The selected text */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #e2e8f0;
+    line-height: 48px;
+    padding-left: 15px;
+}
+
+/* The dropdown arrow */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px;
+}
+
+/* The popup menu background */
+.select2-dropdown {
+    background-color: #2a2a3b; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* The search input box inside the menu */
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: #1e1e2f;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+/* Unselected options */
+.select2-results__option {
+    color: #cbd5e1;
+}
+
+/* Hovered/Selected option */
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #60a5fa; /* Your nice blue highlight */
+    color: white;
+}
+/* ------------------------------- */
