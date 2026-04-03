@@ -44,6 +44,7 @@
             <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
         </header>
         <main class="scrollable-content">
+            
             <div class="card">
                 <h2 style="margin-top:0;"><i class="fa-solid fa-desktop"></i> PC Request</h2>
                 <div class="grid-2" style="margin-bottom:0;">
@@ -58,6 +59,28 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <!-- NEW: AI-LITE RECOMMENDATION SECTION -->
+            {% if recommended_books %}
+            <div class="card" style="border-left: 4px solid var(--primary);">
+                <h2 style="margin-top:0;"><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Recommended for You</h2>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: -10px; margin-bottom: 15px;">Based on your recent activity and library trends.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    {% for book in recommended_books %}
+                    <div style="border: 1px solid var(--border); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(0,0,0,0.02);">
+                        <div>
+                            <span style="font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: var(--primary);">{{ book.category.name|default:"General" }}</span>
+                            <h3 style="margin: 10px 0 5px 0; font-size: 16px;">{{ book.title }}</h3>
+                            <p style="margin: 0 0 15px 0; font-size: 13px; color: var(--text-secondary);">By {{ book.author }}</p>
+                        </div>
+                        <a href="{% url 'borrow_book' book.id %}" class="btn-submit" style="width: 100%; text-align: center; font-size: 13px; padding: 8px; background: var(--success);" onclick="confirmAction(event, 'Borrow Book?', 'Request to borrow {{ book.title|escapejs }}?', 'Yes, Borrow', '#10b981')">Borrow Now</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <!-- END RECOMMENDATION SECTION -->
 
             <!-- Full width tables -->
             <div class="card">

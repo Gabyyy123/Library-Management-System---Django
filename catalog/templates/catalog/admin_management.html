@@ -82,17 +82,24 @@
 
         <main class="scrollable-content">
             <div class="grid-3">
-                <div class="card" style="margin-bottom:0;">
-                    <h2 style="margin-top:0;"><i class="fa-solid fa-user-plus"></i> Add User</h2>
-                    <form method="POST" action="{% url 'add_user' %}" onsubmit="confirmSubmit(event, this, 'Add User?', 'Confirm account?', 'Register', '#4f46e5')">
-                        {% csrf_token %}
-                        <input type="text" name="username" class="form-input" placeholder="Username" required>
-                        <input type="password" name="password" class="form-input" placeholder="Password" required>
-                        <input type="text" name="id_number" class="form-input" placeholder="School ID" required>
-                        <select name="role" class="form-input"><option value="student">Student</option><option value="instructor">Instructor</option><option value="admin">Librarian</option></select>
-                        <button type="submit" class="btn-submit">Register</button>
-                    </form>
-                </div>
+              <div class="card" style="margin-bottom:0;">
+    <h2 style="margin-top:0;"><i class="fa-solid fa-user-plus"></i> Add User</h2>
+    <form method="POST" action="{% url 'add_user' %}" onsubmit="confirmSubmit(event, this, 'Add User?', 'Confirm account?', 'Register', '#4f46e5')">
+        {% csrf_token %}
+        <input type="text" name="username" class="form-input" placeholder="Username" required>
+        <input type="password" name="password" class="form-input" placeholder="Password" required>
+        <input type="text" name="id_number" class="form-input" placeholder="School ID" required>
+        
+        <input type="email" name="email" class="form-input" placeholder="Personal Email" required>
+        
+        <select name="role" class="form-input">
+            <option value="student">Student</option>
+            <option value="instructor">Instructor</option>
+            <option value="admin">Librarian</option>
+        </select>
+        <button type="submit" class="btn-submit">Register</button>
+    </form>
+</div>
                 <div class="card" style="margin-bottom:0;">
                     <h2 style="margin-top:0;"><i class="fa-solid fa-key"></i> Reset Password</h2>
                     <form method="POST" action="{% url 'reset_password' %}" onsubmit="confirmSubmit(event, this, 'Reset?', 'Override password?', 'Yes, Reset', '#f59e0b')">
