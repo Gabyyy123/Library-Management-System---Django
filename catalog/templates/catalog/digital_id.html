@@ -32,6 +32,7 @@
                 <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
                 
 <a href="{% url 'admin_user_logs' %}" class="nav-link {% if active_tab == 'user_logs' %}active{% endif %}"><i class="fa-solid fa-users"></i> User Logs</a>
+<a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
             {% else %}
                 <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
                 <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>

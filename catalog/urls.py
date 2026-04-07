@@ -31,4 +31,9 @@ urlpatterns = [
    path('trigger-reminders/', views.send_daily_reminders, name='send_daily_reminders'),
 path('digital-id/', views.digital_id, name='digital_id'),
 path('user-logs/', views.admin_user_logs, name='admin_user_logs'),
+path('activate_student/<int:student_id>/', views.activate_student, name='activate_student'),
+    path('change_password/', views.change_password, name='change_password'),
+    path('admin_masterlist/', views.admin_masterlist, name='admin_masterlist'),
+    path('generate_sample_students/', views.generate_sample_students, name='generate_sample_students'),
+    path('activate_student/<int:student_id>/', views.activate_student, name='activate_student'),
 ]

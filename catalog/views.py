@@ -6,11 +6,15 @@ from datetime import date, timedelta
 from django.utils import timezone
 from django.db.models import Count, Q
 import json
-from .models import Book, Category, BorrowRecord, UserProfile, Computer, MeetingRoomSchedule
+from .models import Book, Category, BorrowRecord, UserProfile, Computer, MeetingRoomSchedule, EnrolledStudent
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.conf import settings  # NEW: Imports settings so we can use EMAIL_HOST_USER dynamically
+from django.conf import settings  
+from django.contrib.auth import update_session_auth_hash
+from django.http import HttpResponse
+import random
+from django.urls import reverse
 
 def user_login(request):
     if request.method == 'POST':
@@ -103,10 +107,52 @@ def admin_history(request):
 @login_required
 def admin_management(request):
     if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    # 1. Inventory Search Logic
     inventory_q = request.GET.get('inventory_q', '')
     books = Book.objects.all().order_by('book_id')
-    if inventory_q: books = books.filter(title__icontains=inventory_q) | books.filter(book_id__icontains=inventory_q)
-    context = {'profile': request.user.userprofile, 'active_tab': 'management', 'categories': Category.objects.all(), 'books': books, 'total_books': Book.objects.count(), 'available_books': Book.objects.filter(status='Available').count(), 'unavailable_books': Book.objects.exclude(status='Available').count(), 'inventory_q': inventory_q, 'all_users': User.objects.filter(userprofile__role__in=['student', 'instructor']).order_by('username')}
+    if inventory_q: 
+        books = books.filter(Q(title__icontains=inventory_q) | Q(book_id__icontains=inventory_q))
+
+    # 2. Student Masterlist Search Logic
+    student_q = request.GET.get('student_q', '')
+    dept_filter = request.GET.get('department', '')
+    sec_filter = request.GET.get('section', '')
+    
+    # Base query: get all students and instructors
+    all_users = User.objects.filter(userprofile__role__in=['student', 'instructor']).order_by('username')
+    
+    # Apply search filter if admin typed a name or ID
+    if student_q:
+        all_users = all_users.filter(
+            Q(username__icontains=student_q) | 
+            Q(first_name__icontains=student_q) | 
+            Q(last_name__icontains=student_q) | 
+            Q(userprofile__id_number__icontains=student_q)
+        )
+        
+    # [!] NOTE: If you eventually link Department and Section to your UserProfile model, 
+    # you can uncomment the two lines below to make the dropdown filters work:
+    # if dept_filter: all_users = all_users.filter(userprofile__department_id=dept_filter)
+    # if sec_filter: all_users = all_users.filter(userprofile__section_id=sec_filter)
+
+    context = {
+        'profile': request.user.userprofile, 
+        'active_tab': 'management', 
+        'categories': Category.objects.all(), 
+        'books': books, 
+        'total_books': Book.objects.count(), 
+        'available_books': Book.objects.filter(status='Available').count(), 
+        'unavailable_books': Book.objects.exclude(status='Available').count(), 
+        'inventory_q': inventory_q, 
+        
+     
+        'all_users': all_users,
+        
+       
+        'departments': [], 
+        'sections': [],    
+    }
     return render(request, 'catalog/admin_management.html', context)
 
 @login_required
@@ -353,3 +399,109 @@ def admin_user_logs(request):
         'query': query
     }
     return render(request, 'catalog/admin_user_logs.html', context)
+
+@login_required
+def activate_student(request, student_id):
+    if request.user.userprofile.role == 'admin':
+        student = get_object_or_404(EnrolledStudent, id=student_id)
+        
+        if not student.is_activated:
+            # Create account: Username AND Password are the exact 7-digit ID Number
+            user = User.objects.create_user(
+                username=student.id_number, 
+                password=student.id_number, # No more "cec" prefix
+                first_name=student.first_name,
+                last_name=student.last_name
+            )
+            
+            UserProfile.objects.create(
+                user=user,
+                role='student',
+                id_number=student.id_number
+            )
+            
+            student.is_activated = True
+            student.save()
+            
+    # Redirect back to the masterlist, staying on the same department tab
+    return redirect(request.META.get('HTTP_REFERER', 'admin_masterlist'))
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        new_pass = request.POST.get('new_password')
+        confirm_pass = request.POST.get('confirm_password')
+        
+        if new_pass and new_pass == confirm_pass:
+            # Update the password
+            request.user.set_password(new_pass)
+            request.user.save()
+            # This keeps the user logged in after the password changes
+            update_session_auth_hash(request, request.user) 
+            
+    return redirect(request.META.get('HTTP_REFERER', 'edit_profile'))
+
+@login_required
+def admin_masterlist(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED Major in english', 'BSED Major in math', 'BEED']
+    selected_dept = request.GET.get('department', 'BSIT')
+    search_q = request.GET.get('q', '')
+    
+    masterlist = EnrolledStudent.objects.filter(department=selected_dept).order_by('last_name')
+    
+    if search_q:
+        # THE FIX: Split "John Doe" into ["John", "Doe"] and search both
+        terms = search_q.split()
+        for term in terms:
+            masterlist = masterlist.filter(
+                Q(first_name__icontains=term) | 
+                Q(last_name__icontains=term) | 
+                Q(id_number__icontains=term)
+            )
+
+    context = {
+        'profile': request.user.userprofile,
+        'active_tab': 'masterlist',
+        'departments': departments,
+        'selected_dept': selected_dept,
+        'masterlist': masterlist,
+        'search_q': search_q
+    }
+    return render(request, 'catalog/admin_masterlist.html', context)
+
+@login_required
+def generate_sample_students(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    # THE FIX: Grab the department from the URL so we know where to redirect back to
+    current_dept = request.GET.get('department', 'BSIT')
+    
+    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED Major in english', 'BSED Major in math', 'BEED']
+    first_names = ["John", "Jane", "Mark", "Maria", "Paul", "Anna", "David", "Sarah", "James", "Emily"]
+    last_names = ["Doe", "Smith", "Garcia", "Reyes", "Cruz", "Bautista", "Ocampo", "Aquino", "Mendoza", "Santos"]
+
+    base_id = 2310000
+    
+    # Generate 10 students for EVERY department (70 total)
+    for d_idx, dept in enumerate(departments):
+        for i in range(1, 11): # Loop 10 times
+            student_id = str(base_id + (d_idx * 100) + i) # Ensures unique 7-digit ID
+            
+            # Randomize enrollment year (between 2022 and 2025) to test the dynamic Year Level
+            random_enrollment = random.choice([2022, 2023, 2024, 2025])
+            
+            EnrolledStudent.objects.get_or_create(
+                id_number=student_id, 
+                defaults={
+                    'first_name': random.choice(first_names), 
+                    'last_name': random.choice(last_names), 
+                    'department': dept,
+                    'enrollment_year': random_enrollment
+                }
+            )
+            
+    # THE FIX: Redirect precisely back to the tab the admin was viewing
+    base_url = reverse('admin_masterlist')
+    return redirect(f"{base_url}?department={current_dept}")

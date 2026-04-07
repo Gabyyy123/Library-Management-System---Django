@@ -49,28 +49,42 @@
         }
     </style>
 </head>
-<body>
+<body class="{% if profile.role == 'admin' %}admin-mode{% endif %}">
     <div class="sidebar-overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="profile-section">
-            {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
-            <h2 style="margin: 0; color:#fff; font-size: 18px;">{{ user.username }}</h2>
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
+            {% endif %}
+            
+            {% if profile.role == 'admin' %}
+                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+            {% else %}
+                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.username }}</h2>
+            {% endif %}
+            
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
+        
         <div class="sidebar-nav-container">
-            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
-            <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
-            <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
-            <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
-            <a href="{% url 'admin_management' %}" class="nav-link active"><i class="fa-solid fa-gears"></i> Manage</a>
-            <a href="{% url 'admin_user_logs' %}" class="nav-link {% if active_tab == 'user_logs' %}active{% endif %}">
-    <i class="fa-solid fa-users"></i> User Logs
-</a>
+            {% if profile.role == 'admin' %}
+                <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
+                <a href="{% url 'admin_pcs' %}" class="nav-link"><i class="fa-solid fa-desktop"></i> PC Stations</a>
+                <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+                <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+                <a href="{% url 'admin_management' %}" class="nav-link active"><i class="fa-solid fa-gears"></i> Manage</a>
+                <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
+                <a href="{% url 'admin_user_logs' %}" class="nav-link {% if active_tab == 'user_logs' %}active{% endif %}"><i class="fa-solid fa-users"></i> User Logs</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+            {% endif %}
+            
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
-
-            <!-- NEW DIGITAL ID LINK ADDED HERE -->
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
-            <a href="{% url 'logout' %}" class="nav-link" style="color:#fca5a5; margin-top:10px;" onclick="confirmAction(event, 'Logout?', 'End session?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
 
@@ -88,32 +102,14 @@
 
         <main class="scrollable-content">
             <div class="grid-3">
-              <div class="card" style="margin-bottom:0;">
-    <h2 style="margin-top:0;"><i class="fa-solid fa-user-plus"></i> Add User</h2>
-    <form method="POST" action="{% url 'add_user' %}" onsubmit="confirmSubmit(event, this, 'Add User?', 'Confirm account?', 'Register', '#4f46e5')">
-        {% csrf_token %}
-        <input type="text" name="username" class="form-input" placeholder="Username" required>
-        <input type="password" name="password" class="form-input" placeholder="Password" required>
-        <input type="text" name="id_number" class="form-input" placeholder="School ID" required>
-        
-        <input type="email" name="email" class="form-input" placeholder="Personal Email" required>
-        
-        <select name="role" class="form-input">
-            <option value="student">Student</option>
-            <option value="instructor">Instructor</option>
-            <option value="admin">Librarian</option>
-        </select>
-        <button type="submit" class="btn-submit">Register</button>
-    </form>
-</div>
+                
+                <!-- Reset Password Card -->
                 <div class="card" style="margin-bottom:0;">
                     <h2 style="margin-top:0;"><i class="fa-solid fa-key"></i> Reset Password</h2>
                     <form method="POST" action="{% url 'reset_password' %}" onsubmit="confirmSubmit(event, this, 'Reset?', 'Override password?', 'Yes, Reset', '#f59e0b')">
                         {% csrf_token %}
-                        
-                        <!-- ADDED class="searchable-select" HERE -->
-                        <select name="user_id" class="form-input searchable-select" required>
-                            <option value="" disabled selected>Select User...</option>
+                        <select name="user_id" class="form-input searchable-select" data-placeholder="Search for a user..." required>
+                            <option value="" disabled selected>Search for a user...</option>
                             {% for u in all_users %}<option value="{{ u.id }}">{{ u.username }}</option>{% endfor %}
                         </select>
                         
@@ -121,6 +117,8 @@
                         <button type="submit" class="btn-submit" style="background:var(--warning); color:#000;">Override</button>
                     </form>
                 </div>
+
+                <!-- Add Book Card -->
                 <div class="card" style="margin-bottom:0;">
                     <h2 style="margin-top:0;"><i class="fa-solid fa-book-medical"></i> Add Book</h2>
                     <form method="POST" action="{% url 'add_book' %}" onsubmit="confirmSubmit(event, this, 'Add Book?', 'Add to catalog?', 'Yes, Add', '#10b981')">
@@ -128,7 +126,7 @@
                         <input type="text" name="book_id" class="form-input" placeholder="Book ID" required>
                         <input type="text" name="title" class="form-input" placeholder="Title" required>
                         <input type="text" name="author" class="form-input" placeholder="Author" required>
-                        <select name="category_id" class="form-input" required>
+                        <select name="category_id" class="form-input searchable-select" data-placeholder="Select Category..." required>
                             <option value="" disabled selected>Select Category...</option>
                             {% for cat in categories %}<option value="{{ cat.id }}">{{ cat.name }}</option>{% endfor %}
                         </select>
@@ -137,6 +135,7 @@
                 </div>
             </div>
 
+            <!-- Inventory Control -->
             <div class="card">
                 <h2 style="margin-top:0;"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</h2>
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
@@ -145,7 +144,6 @@
                     <span class="stats-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">Unavailable: {{ unavailable_books }}</span>
                 </div>
 
-                <!-- FIXED SEARCH BAR -->
                 <form method="GET" style="display:flex; gap:10px; margin-bottom: 20px; flex-wrap: wrap;">
                     <input type="text" name="inventory_q" value="{{ inventory_q }}" class="form-input" style="margin-bottom:0; flex:1; min-width: 200px;" placeholder="Search Book Title or ID...">
                     <button type="submit" class="btn-submit" style="width:auto; padding: 12px 25px;">Search</button>
@@ -201,13 +199,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <!-- Turn targeted dropdown into search bar -->
+    <!-- Turn targeted dropdowns into search bars dynamically -->
     <script>
         $(document).ready(function() {
-            // Targets only the select tag with the "searchable-select" class
-            $('.searchable-select').select2({
-                placeholder: "Search for a user...",
-                width: '100%' 
+            $('.searchable-select').each(function() {
+                $(this).select2({
+                    placeholder: $(this).data('placeholder'),
+                    width: '100%',
+                    allowClear: true 
+                });
             });
         });
     </script>

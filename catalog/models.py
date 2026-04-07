@@ -60,3 +60,38 @@ class MeetingRoomSchedule(models.Model):
     time_slot = models.CharField(max_length=100)
     purpose = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Upcoming')
+
+class EnrolledStudent(models.Model):
+    id_number = models.CharField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    section = models.CharField(max_length=50, blank=True, null=True)
+    
+    # NEW: Tracks when they started to calculate their year dynamically
+    enrollment_year = models.IntegerField(default=date.today().year)
+    
+    is_activated = models.BooleanField(default=False) 
+
+    @property
+    def current_year_level(self):
+        """Calculates the student's year level based on current date"""
+        current_year = date.today().year
+        current_month = date.today().month
+        
+        # Assumes the new school year shifts in August
+        academic_year = current_year if current_month >= 8 else current_year - 1
+        
+        year_diff = academic_year - self.enrollment_year + 1
+        
+        if year_diff == 1: return "1st Year"
+        elif year_diff == 2: return "2nd Year"
+        elif year_diff == 3: return "3rd Year"
+        elif year_diff == 4: return "4th Year"
+        elif year_diff > 4: return f"{year_diff}th Year"
+        else: return "Incoming"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.id_number} - {self.department})"
+
+    
