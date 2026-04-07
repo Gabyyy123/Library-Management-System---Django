@@ -734,3 +734,21 @@ def student_meetings(request):
         'appointments': my_appointments
     }
     return render(request, 'catalog/student_meetings.html', context)
+
+
+
+@login_required
+def secret_wipe_data(request):
+    # SECURITY: Only you (the Superuser) can run this!
+    if not request.user.is_superuser:
+        return redirect('dashboard')
+        
+    # 1. Delete all records from the Masterlist
+    EnrolledStudent.objects.all().delete()
+    
+    # 2. Delete all generated User accounts (EXCEPT your Admin/Superuser)
+    User.objects.filter(is_superuser=False, is_staff=False).delete()
+    
+    # Send a success message
+    messages.success(request, "SYSTEM WIPED: All test students and accounts have been deleted.")
+    return redirect('admin_masterlist')
