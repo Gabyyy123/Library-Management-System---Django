@@ -54,14 +54,25 @@
 
         <main class="scrollable-content">
             
-            {% if messages %}
+           {% if messages %}
                 {% for message in messages %}
-                    <div style="padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; color: #fff; background: {% if message.tags == 'error' %}var(--danger){% else %}var(--success){% endif %}; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        {{ message }}
-                    </div>
+                    {% if message.tags == 'error' %}
+                        <div style="padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; color: #fff; background: var(--danger); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            {{ message }}
+                        </div>
+                    {% else %}
+                        <div style="padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; color: #fff; background: var(--success); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            {{ message }}
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
-            
+            ```
+
+Once you save that, the red lines will vanish! 
+
+What's the next target once Render finishes building? The **Digital ID**, the **PC Stations**, or something else?
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
                 <div class="card" style="margin: 0;">
                     <h2><i class="fa-solid fa-calendar-plus"></i> Book Meeting Room</h2>
