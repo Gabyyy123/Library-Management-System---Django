@@ -45,14 +45,26 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'cloudinary_storage',        
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', 
     'catalog', 
+    'cloudinary',                 
 ]
+
+# Cloudinary Settings (Get these from your Cloudinary Dashboard)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dd5jps1yc',
+    'API_KEY': '328388532915668',
+    'API_SECRET': 'wa-fXWBcra09wHR0LO3P0knsrpg'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
