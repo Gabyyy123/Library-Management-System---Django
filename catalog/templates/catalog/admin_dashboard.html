@@ -22,7 +22,13 @@
     <div class="sidebar" id="sidebar">
         <div class="profile-section">
             {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
-            <h2 style="margin: 0; color:#fff; font-size: 18px;">{{ user.username }}</h2>
+            <h2 style="margin: 0; font-size: 18px;">
+    {% if user.first_name or user.last_name %}
+        {{ user.first_name }} {{ user.last_name }}
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+</h2>
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
         <div class="sidebar-nav-container">
@@ -35,7 +41,7 @@
     <i class="fa-solid fa-users"></i> User Logs
 </a>
     <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
-            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="nav-link "><i class="fa-solid fa-user-gear"></i> Profile</a>
 
             <!-- NEW DIGITAL ID LINK ADDED HERE -->
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>

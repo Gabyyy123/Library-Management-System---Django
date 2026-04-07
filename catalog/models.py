@@ -108,3 +108,22 @@ class EnrolledStudent(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.id_number} - {self.department})"
+
+class Meeting(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    meeting_date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    purpose = models.TextField()
+    
+    # The status field is what makes the Accept/Reject logic work!
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected')
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.username} - {self.meeting_date}"

@@ -20,12 +20,19 @@
             {% else %}
                 <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
             {% endif %}
-          <h2 style="margin: 0; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
+          <h2 style="margin: 0; font-size: 18px;">
+    {% if user.first_name or user.last_name %}
+        {{ user.first_name }} {{ user.last_name }}
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+</h2>
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
         <div class="sidebar-nav-container">
             <a href="{% url 'dashboard' %}" class="nav-link active"><i class="fa-solid fa-house"></i> Home</a>
             <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+            <a href="{% url 'student_meetings' %}" class="nav-link {% if active_tab == 'meetings' %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
             
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
@@ -46,15 +53,15 @@
         </header>
         <main class="scrollable-content">
             
-            {% if not profile.email %}
-            <div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px 20px; margin-bottom: 20px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                <div>
-                    <h3 style="margin: 0 0 5px 0; color: var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i> Action Required: Missing Email</h3>
-                    <p style="margin: 0; font-size: 14px; color: var(--text-secondary);">You won't receive automated due date reminders without an email address. Avoid penalty fees!</p>
-                </div>
-                <a href="{% url 'edit_profile' %}" class="btn-submit" style="background: var(--warning); color: #000; width: auto; padding: 10px 20px; text-decoration: none; font-weight: bold;">Add Email Now</a>
-            </div>
-            {% endif %}
+           {% if not user.email %}
+<div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px 20px; margin-bottom: 20px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+    <div>
+        <h3 style="margin: 0 0 5px 0; color: var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i> Action Required: Missing Email</h3>
+        <p style="margin: 0; font-size: 14px; color: var(--text-secondary);">You won't receive automated due date reminders without an active email address. Avoid penalty fees!</p>
+    </div>
+    <a href="{% url 'edit_profile' %}" class="btn-submit" style="background: var(--warning); color: #000; width: auto; padding: 10px 20px; text-decoration: none; font-weight: bold;">Add Email Now</a>
+</div>
+{% endif %}
             
             <div class="card">
                 <h2 style="margin-top:0;"><i class="fa-solid fa-desktop"></i> PC Request</h2>
@@ -131,40 +138,6 @@
                 </div>
             </div>
 
-            <div class="grid-2">
-                <div class="card" style="margin-bottom:0;">
-                    <h2 style="margin-top:0;"><i class="fa-solid fa-calendar"></i> Book Meeting Room</h2>
-                    <form method="POST" action="{% url 'book_room' %}" onsubmit="confirmSubmit(event, this, 'Confirm Booking?', 'Submit this meeting room request?', 'Yes, Book It', '#3b82f6')">
-                        {% csrf_token %}
-                        <input type="date" name="date" class="form-input" required>
-                        <input type="text" name="time_slot" class="form-input" placeholder="Time Slot (e.g. 10:00 AM - 12:00 PM)" required>
-                        <input type="text" name="purpose" class="form-input" placeholder="Purpose of Meeting" required>
-                        <button type="submit" class="btn-submit">Submit Appointment</button>
-                    </form>
-                </div>
-
-                <div class="card" style="margin-bottom:0;">
-                    <h2 style="margin-top:0;"><i class="fa-solid fa-calendar-check"></i> My Appointments</h2>
-                    <div class="table-responsive" style="max-height: 250px;">
-                        <table>
-                            <tr><th>Date & Time</th><th>Status</th></tr>
-                            {% for m in my_meetings %}
-                            <tr>
-                                <td><strong>{{ m.date|date:'M d, Y' }}</strong><br><span style="font-size: 12px; color: var(--text-secondary);">{{ m.time_slot }}</span></td>
-                                <td style="color: var(--primary); font-weight:bold;">Upcoming</td>
-                            </tr>
-                            {% endfor %}
-                            {% for m in my_history_meetings %}
-                            <tr>
-                                <td><strong>{{ m.date|date:'M d, Y' }}</strong></td>
-                                <td style="color: var(--success); font-weight:bold;">Completed</td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="2" style="text-align:center; padding:30px; color:var(--text-secondary);">No meeting requests.</td></tr>
-                            {% endfor %}
-                        </table>
-                    </div>
-                </div>
             </div>
         </main>
     </div>

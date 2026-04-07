@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Meetings</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar-overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="profile-section">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="profile-photo">
+            {% else %}
+                <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
+            {% endif %}
+            
+            <h2 style="margin: 0; color: #fff; font-size: 18px;">
+                {% if user.first_name or user.last_name %}
+                    {{ user.first_name }} {{ user.last_name }}
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+            </h2>
+            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+        </div>
+
+        <div class="sidebar-nav-container">
+            <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+            <a href="{% url 'student_meetings' %}" class="nav-link active"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
+            <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+            <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="layout-wrapper">
+        <header class="top-header">
+            <div style="display:flex; align-items:center;">
+                <button class="hamburger" id="burger">☰</button>
+                <div>
+                    <h1 style="margin:0; font-size:22px;">Meeting Rooms</h1>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Book and manage your study sessions.</p>
+                </div>
+            </div>
+            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">🌙</span></div>
+        </header>
+
+        <main class="scrollable-content">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; color: #fff; background: {% if message.tags == 'error' %}var(--danger){% else %}var(--success){% endif %}; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+                <div class="card" style="margin: 0;">
+                    <h2><i class="fa-solid fa-calendar-plus"></i> Book Meeting Room</h2>
+                    <form method="POST" action="{% url 'student_meetings' %}">
+                        {% csrf_token %}
+                        
+                        <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Date</label>
+                        <input type="date" name="meeting_date" class="form-input" required>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Start Time</label>
+                                <input type="time" name="start_time" class="form-input" required>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">End Time</label>
+                                <input type="time" name="end_time" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Purpose of Meeting</label>
+                        <textarea name="purpose" class="form-input" rows="3" placeholder="e.g. Group Project Study" required></textarea>
+                        
+                        <button type="submit" class="btn-submit" style="background: var(--primary);">Submit Appointment</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin: 0;">
+                    <h2><i class="fa-solid fa-calendar-check"></i> My Appointments</h2>
+                    
+                    <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">
+                        <span>Date & Time</span>
+                        <span>Status</span>
+                    </div>
+
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="fa-regular fa-calendar-xmark" style="font-size: 30px; margin-bottom: 10px; opacity: 0.5;"></i>
+                        <p style="margin: 0; font-size: 14px;">No meeting requests.</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: '#1e293b', color: '#fff' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
+        overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        document.body.classList.add('dark-mode'); 
+    </script>
+</body>
+</html>

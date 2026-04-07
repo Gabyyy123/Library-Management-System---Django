@@ -39,4 +39,6 @@ path('update_status/<int:student_id>/', views.update_student_status, name='updat
 path('bulk_sync_students/', views.bulk_sync_students, name='bulk_sync_students'),
 path('update_status/<int:student_id>/', views.update_student_status, name='update_student_status'),
 path('bulk_sync_students/', views.bulk_sync_students, name='bulk_sync_students'),
+path('my-meetings/', views.student_meetings, name='student_meetings'),
+path('update_meeting_status/<int:meeting_id>/', views.update_meeting_status, name='update_meeting_status'),
 ]

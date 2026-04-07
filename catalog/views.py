@@ -5,8 +5,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from datetime import date, timedelta
 from django.utils import timezone
 from django.db.models import Count, Q
+from django.db import models
 import json
-from .models import Book, Category, BorrowRecord, UserProfile, Computer, MeetingRoomSchedule, EnrolledStudent
+from .models import Book, Category, BorrowRecord, UserProfile, Computer, MeetingRoomSchedule, EnrolledStudent, Meeting
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -16,6 +17,7 @@ from django.http import HttpResponse
 import random
 from django.urls import reverse
 import openpyxl
+from django.contrib import messages
 
 def user_login(request):
     if request.method == 'POST':
@@ -169,37 +171,38 @@ def browse_library(request):
 
 @login_required
 def edit_profile(request):
-    profile = request.user.userprofile
+    user = request.user
+    profile = user.userprofile
+    
     if request.method == 'POST':
-        new_id = request.POST.get('id_number')
-        new_email = request.POST.get('email')
+        # 1. Safely update Display Names (Does NOT touch the username)
+        user.first_name = request.POST.get('first_name', user.first_name).strip()
+        user.last_name = request.POST.get('last_name', user.last_name).strip()
         
-        # NEW: Catch the first and last name from the form
-        new_fname = request.POST.get('first_name')
-        new_lname = request.POST.get('last_name')
-        
-        if new_id:
-            profile.id_number = new_id
-            
+        # 2. Safely update Email (Allows blank if they don't want to provide one)
+        new_email = request.POST.get('email', '').strip()
         if new_email:
-            profile.email = new_email 
-            request.user.email = new_email 
-            
-        # NEW: Save the updated names to the core User model
-        if new_fname:
-            request.user.first_name = new_fname
-        if new_lname:
-            request.user.last_name = new_lname
-            
-        request.user.save()
-            
-        if 'profile_photo' in request.FILES: 
+            user.email = new_email
+        
+        user.save()
+
+        # 3. Update the custom Profile data (ID Number and Photo)
+        profile.id_number = request.POST.get('id_number', profile.id_number).strip()
+        
+        if 'profile_photo' in request.FILES:
             profile.profile_photo = request.FILES['profile_photo']
             
         profile.save()
-        return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
         
-    return render(request, 'catalog/edit_profile.html', {'profile': profile, 'active_tab': 'profile'})
+        # Add a success message here if you want!
+        return redirect('edit_profile')
+
+    context = {
+        'user': user,
+        'profile': profile,
+        'active_tab': 'profile'
+    }
+    return render(request, 'catalog/edit_profile.html', context)
 
 @login_required
 def borrow_book(request, book_id):
@@ -626,3 +629,108 @@ def bulk_sync_students(request):
             print("-----------------------")
             
     return redirect(request.META.get('HTTP_REFERER', 'admin_masterlist'))
+
+@login_required
+def admin_meetings(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    # Get all meetings, putting the 'Pending' ones at the very top
+    all_meetings = Meeting.objects.all().order_by(
+        models.Case(
+            models.When(status='Pending', then=0),
+            default=1
+        ),
+        '-created_at'
+    )
+    
+    context = {
+        'profile': request.user.userprofile,
+        'active_tab': 'meetings',
+        'meetings': all_meetings
+    }
+    return render(request, 'catalog/admin_meetings.html', context)
+
+@login_required
+def update_meeting_status(request, meeting_id):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    if request.method == 'POST':
+        meeting = get_object_or_404(Meeting, id=meeting_id)
+        action = request.POST.get('action') # Will be 'Approve' or 'Reject'
+        
+        if action == 'Approve':
+            # Double check for conflicts one last time just in case!
+            conflicts = Meeting.objects.filter(
+                meeting_date=meeting.meeting_date,
+                status='Approved',
+                start_time__lt=meeting.end_time,
+                end_time__gt=meeting.start_time
+            ).exclude(id=meeting.id)
+            
+            if conflicts.exists():
+                messages.error(request, "Cannot approve. This overlaps with an already approved meeting.")
+            else:
+                meeting.status = 'Approved'
+                meeting.save()
+                messages.success(request, "Meeting Approved.")
+                
+                # Pro-tip: Automatically reject other pending requests for this same time
+                Meeting.objects.filter(
+                    meeting_date=meeting.meeting_date,
+                    status='Pending',
+                    start_time__lt=meeting.end_time,
+                    end_time__gt=meeting.start_time
+                ).update(status='Rejected')
+                
+        elif action == 'Reject':
+            meeting.status = 'Rejected'
+            meeting.save()
+            messages.success(request, "Meeting Rejected.")
+            
+    return redirect('admin_meetings')
+
+@login_required
+def student_meetings(request):
+    if request.user.userprofile.role == 'admin': return redirect('admin_meetings')
+        
+    if request.method == 'POST':
+        date = request.POST.get('meeting_date')
+        start = request.POST.get('start_time')
+        end = request.POST.get('end_time')
+        purpose = request.POST.get('purpose')
+        
+        # 1. THE AUTO-REJECT LOGIC (Conflict Check)
+        # Check if an 'Approved' meeting already exists on this date that overlaps with these times
+        conflicts = Meeting.objects.filter(
+            meeting_date=date,
+            status='Approved',
+            start_time__lt=end, # New meeting ends AFTER existing meeting starts
+            end_time__gt=start  # New meeting starts BEFORE existing meeting ends
+        )
+        
+        if conflicts.exists():
+            # Time slot is taken! Tell the student.
+            messages.error(request, "This time slot is already booked by someone else.")
+        else:
+            # Time slot is free! Save the pending request.
+            Meeting.objects.create(
+                student=request.user,
+                meeting_date=date,
+                start_time=start,
+                end_time=end,
+                purpose=purpose,
+                status='Pending'
+            )
+            messages.success(request, "Meeting request submitted! Waiting for admin approval.")
+            
+        return redirect('student_meetings')
+
+    # Fetch this specific student's appointments to show on the right side of the screen
+    my_appointments = Meeting.objects.filter(student=request.user).order_by('-meeting_date', '-start_time')
+
+    context = {
+        'profile': request.user.userprofile,
+        'active_tab': 'meetings',
+        'appointments': my_appointments
+    }
+    return render(request, 'catalog/student_meetings.html', context)

@@ -21,11 +21,13 @@
                 <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
             {% endif %}
             
-            {% if profile.role == 'admin' %}
-                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
-            {% else %}
-                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
-            {% endif %}
+            <h2 style="margin: 0; color: #fff; font-size: 18px;">
+                {% if user.first_name or user.last_name %}
+                    {{ user.first_name }} {{ user.last_name }}
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+            </h2>
             
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
@@ -44,10 +46,11 @@
             {% else %}
                 <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
                 <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
+                <a href="{% url 'student_meetings' %}" class="nav-link {% if active_tab == 'meetings' %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             {% endif %}
             
-            <a href="{% url 'edit_profile' %}" class="nav-link active"><i class="fa-solid fa-user-pen"></i> Profile</a>
-            
+                        <a href="{% url 'edit_profile' %}" class="nav-link active"><i class="fa-solid fa-user-gear"></i> Profile</a>
+
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
             
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -88,7 +91,7 @@
                         <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
                         
                         <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>
-                        <input type="email" name="email" value="{{ profile.email|default:'' }}" class="form-input" placeholder="Enter an active email for notifications" required>
+                        <input type="email" name="email" value="{{ user.email|default:'' }}" class="form-input" placeholder="Enter an active email for notifications" required>
                         
                         <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Profile Photo</label>
                         <input type="file" name="profile_photo" class="form-input" style="padding: 10px;">

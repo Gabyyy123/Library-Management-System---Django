@@ -33,9 +33,21 @@
             {% endif %}
             
             {% if profile.role == 'admin' %}
-                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+                <h2 style="margin: 0; font-size: 18px;">
+    {% if user.first_name or user.last_name %}
+        {{ user.first_name }} {{ user.last_name }}
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+</h2>
             {% else %}
-                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.username }}</h2>
+               <h2 style="margin: 0; font-size: 18px;">
+    {% if user.first_name or user.last_name %}
+        {{ user.first_name }} {{ user.last_name }}
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+</h2>
             {% endif %}
             
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
@@ -48,14 +60,14 @@
                 <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
                 <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
                 <a href="{% url 'admin_management' %}" class="nav-link active"><i class="fa-solid fa-gears"></i> Manage</a>
-                <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
                 <a href="{% url 'admin_user_logs' %}" class="nav-link {% if active_tab == 'user_logs' %}active{% endif %}"><i class="fa-solid fa-users"></i> User Logs</a>
+                <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
             {% else %}
                 <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
                 <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
             {% endif %}
             
-            <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
