@@ -6,47 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>System Admin</title>
     
-    <!-- External Scripts & Fonts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
-    <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-    <!-- Select2 Dark Mode Fixes -->
     <style>
-        .select2-container--default .select2-selection--single {
-            background-color: #1e1e2f; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            height: 48px; 
-            border-radius: 6px;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #e2e8f0;
-            line-height: 48px;
-            padding-left: 15px;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 46px;
-        }
-        .select2-dropdown {
-            background-color: #2a2a3b; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .select2-container--default .select2-search--dropdown .select2-search__field {
-            background-color: #1e1e2f;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-        .select2-results__option {
-            color: #cbd5e1;
-        }
-        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-            background-color: #60a5fa; 
-            color: white;
-        }
+        .select2-container--default .select2-selection--single { background-color: #1e1e2f; border: 1px solid rgba(255, 255, 255, 0.2); height: 48px; border-radius: 6px; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { color: #e2e8f0; line-height: 48px; padding-left: 15px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 46px; }
+        .select2-dropdown { background-color: #2a2a3b; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .select2-container--default .select2-search--dropdown .select2-search__field { background-color: #1e1e2f; color: white; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; }
+        .select2-results__option { color: #cbd5e1; }
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable { background-color: #60a5fa; color: white; }
     </style>
 </head>
 <body class="{% if profile.role == 'admin' %}admin-mode{% endif %}">
@@ -103,7 +76,6 @@
         <main class="scrollable-content">
             <div class="grid-3">
                 
-                <!-- Reset Password Card -->
                 <div class="card" style="margin-bottom:0;">
                     <h2 style="margin-top:0;"><i class="fa-solid fa-key"></i> Reset Password</h2>
                     <form method="POST" action="{% url 'reset_password' %}" onsubmit="confirmSubmit(event, this, 'Reset?', 'Override password?', 'Yes, Reset', '#f59e0b')">
@@ -118,7 +90,6 @@
                     </form>
                 </div>
 
-                <!-- Add Book Card -->
                 <div class="card" style="margin-bottom:0;">
                     <h2 style="margin-top:0;"><i class="fa-solid fa-book-medical"></i> Add Book</h2>
                     <form method="POST" action="{% url 'add_book' %}" onsubmit="confirmSubmit(event, this, 'Add Book?', 'Add to catalog?', 'Yes, Add', '#10b981')">
@@ -135,7 +106,6 @@
                 </div>
             </div>
 
-            <!-- Inventory Control -->
             <div class="card">
                 <h2 style="margin-top:0;"><i class="fa-solid fa-boxes-stacked"></i> Inventory Control</h2>
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
@@ -184,7 +154,6 @@
         </main>
     </div>
 
-    <!-- Scripts -->
     <script>
         function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'warning', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
         function confirmSubmit(e, form, t, s, cT, cC) { e.preventDefault(); Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) form.submit(); }); }
@@ -195,11 +164,9 @@
         document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
     </script>
     
-    <!-- Load jQuery and Select2 engines -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <!-- Turn targeted dropdowns into search bars dynamically -->
     <script>
         $(document).ready(function() {
             $('.searchable-select').each(function() {

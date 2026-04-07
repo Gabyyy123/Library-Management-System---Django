@@ -73,7 +73,7 @@
                     <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" onsubmit="confirmSubmit(event, this, 'Save?', 'Update details?', 'Save', '#4f46e5')">
                         {% csrf_token %}
                         <label style="font-weight:bold; margin-bottom:2px; display:block;">Institution ID</label>
-                        <p style="font-size: 11px; color: var(--danger); margin-top: 0; margin-bottom: 8px;">*Warning: Changing this will change your login username.</p>
+                        
                         <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
                         
                         <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>

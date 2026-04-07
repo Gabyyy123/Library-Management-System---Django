@@ -32,8 +32,8 @@
             <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
             <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
-            <a href="{% url 'admin_user_logs' %}" class="nav-link"><i class="fa-solid fa-users"></i> User Logs</a>
             <a href="{% url 'admin_masterlist' %}" class="nav-link active"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
+            <a href="{% url 'admin_user_logs' %}" class="nav-link"><i class="fa-solid fa-users"></i> User Logs</a>
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-pen"></i> Profile</a>
             <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -70,10 +70,6 @@
                             <a href="{% url 'admin_masterlist' %}?department={{ selected_dept }}" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--text-secondary);">Clear</a>
                         {% endif %}
                     </form>
-                    
-                    <a href="{% url 'generate_sample_students' %}?department={{ selected_dept }}" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--warning); color:#000; text-decoration: none;" onclick="confirmAction(event, 'Generate Samples?', 'This will load 10 dummy students per department for testing.', 'Yes, Generate', '#f59e0b')">
-                        <i class="fa-solid fa-flask"></i> Generate Test Data
-                    </a>
                 </div>
             </div>
 
@@ -85,7 +81,8 @@
                             <th>ID Number</th>
                             <th>First Name</th>
                             <th>Last Name</th>
-                            <th>Year Level</th> <th>Status</th>
+                            <th>Year Level</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                         {% for student in masterlist %}
@@ -105,7 +102,7 @@
                             </td>
                             <td>
                                 {% if not student.is_activated %}
-                                    <a href="{% url 'activate_student' student.id %}" class="btn-submit" style="background:var(--success); padding: 8px 15px; font-size: 13px; width: auto; display: inline-block;" onclick="confirmAction(event, 'Activate Account?', 'This will generate a login for {{ student.first_name }}. Username and Password will both be {{ student.id_number }}.', 'Yes, Activate', '#10b981')">Activate</a>
+                                    <a href="{% url 'activate_student' student.id %}" class="btn-submit" style="background:var(--success); padding: 8px 15px; font-size: 13px; width: auto; display: inline-block;" onclick="confirmAction(event, 'Activate Account?', 'This will generate a login for {{ student.first_name }}. Username will be their name (e.g. firstname.lastname) and Password will be {{ student.id_number }}.', 'Yes, Activate', '#10b981')">Activate</a>
                                 {% else %}
                                     <span style="font-size:12px; color:var(--text-secondary);">Account Created</span>
                                 {% endif %}
@@ -113,7 +110,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" style="text-align:center; padding: 30px; color:var(--text-secondary);">No students found for {{ selected_dept }}. Click 'Generate Test Data' to create some!</td>
+                            <td colspan="6" style="text-align:center; padding: 30px; color:var(--text-secondary);">No students found for {{ selected_dept }}.</td>
                         </tr>
                         {% endfor %}
                     </table>

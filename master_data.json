@@ -1,0 +1,1434 @@
+[
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 1,
+  "fields": {
+    "id_number": "2310781",
+    "first_name": "John",
+    "last_name": "Doe",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": true
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 2,
+  "fields": {
+    "id_number": "2310782",
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 3,
+  "fields": {
+    "id_number": "2310783",
+    "first_name": "Michael",
+    "last_name": "Jordan",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 4,
+  "fields": {
+    "id_number": "2310784",
+    "first_name": "Taylor",
+    "last_name": "Swift",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 5,
+  "fields": {
+    "id_number": "2310785",
+    "first_name": "Gordon",
+    "last_name": "Ramsay",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 6,
+  "fields": {
+    "id_number": "2310786",
+    "first_name": "William",
+    "last_name": "Shakespeare",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 7,
+  "fields": {
+    "id_number": "2310787",
+    "first_name": "Albert",
+    "last_name": "Einstein",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 8,
+  "fields": {
+    "id_number": "2310788",
+    "first_name": "Maria",
+    "last_name": "Montessori",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2026,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 9,
+  "fields": {
+    "id_number": "2310001",
+    "first_name": "Anna",
+    "last_name": "Reyes",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 10,
+  "fields": {
+    "id_number": "2310002",
+    "first_name": "Mark",
+    "last_name": "Cruz",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 11,
+  "fields": {
+    "id_number": "2310003",
+    "first_name": "John",
+    "last_name": "Santos",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 12,
+  "fields": {
+    "id_number": "2310004",
+    "first_name": "Paul",
+    "last_name": "Bautista",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 13,
+  "fields": {
+    "id_number": "2310005",
+    "first_name": "Mark",
+    "last_name": "Ocampo",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 14,
+  "fields": {
+    "id_number": "2310006",
+    "first_name": "John",
+    "last_name": "Mendoza",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 15,
+  "fields": {
+    "id_number": "2310007",
+    "first_name": "James",
+    "last_name": "Smith",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 16,
+  "fields": {
+    "id_number": "2310008",
+    "first_name": "Paul",
+    "last_name": "Ocampo",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 17,
+  "fields": {
+    "id_number": "2310009",
+    "first_name": "Emily",
+    "last_name": "Aquino",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": true
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 18,
+  "fields": {
+    "id_number": "2310010",
+    "first_name": "Jane",
+    "last_name": "Santos",
+    "department": "BSIT",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 19,
+  "fields": {
+    "id_number": "2310101",
+    "first_name": "Sarah",
+    "last_name": "Mendoza",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 20,
+  "fields": {
+    "id_number": "2310102",
+    "first_name": "Sarah",
+    "last_name": "Aquino",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 21,
+  "fields": {
+    "id_number": "2310103",
+    "first_name": "Jane",
+    "last_name": "Reyes",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 22,
+  "fields": {
+    "id_number": "2310104",
+    "first_name": "Sarah",
+    "last_name": "Cruz",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 23,
+  "fields": {
+    "id_number": "2310105",
+    "first_name": "Sarah",
+    "last_name": "Doe",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 24,
+  "fields": {
+    "id_number": "2310106",
+    "first_name": "Anna",
+    "last_name": "Garcia",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 25,
+  "fields": {
+    "id_number": "2310107",
+    "first_name": "Mark",
+    "last_name": "Cruz",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 26,
+  "fields": {
+    "id_number": "2310108",
+    "first_name": "Emily",
+    "last_name": "Aquino",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 27,
+  "fields": {
+    "id_number": "2310109",
+    "first_name": "Maria",
+    "last_name": "Santos",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 28,
+  "fields": {
+    "id_number": "2310110",
+    "first_name": "Sarah",
+    "last_name": "Aquino",
+    "department": "BSCRIM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 29,
+  "fields": {
+    "id_number": "2310201",
+    "first_name": "John",
+    "last_name": "Ocampo",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 30,
+  "fields": {
+    "id_number": "2310202",
+    "first_name": "Anna",
+    "last_name": "Garcia",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 31,
+  "fields": {
+    "id_number": "2310203",
+    "first_name": "Paul",
+    "last_name": "Doe",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 32,
+  "fields": {
+    "id_number": "2310204",
+    "first_name": "Maria",
+    "last_name": "Santos",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 33,
+  "fields": {
+    "id_number": "2310205",
+    "first_name": "Jane",
+    "last_name": "Aquino",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 34,
+  "fields": {
+    "id_number": "2310206",
+    "first_name": "Paul",
+    "last_name": "Aquino",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 35,
+  "fields": {
+    "id_number": "2310207",
+    "first_name": "Anna",
+    "last_name": "Reyes",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 36,
+  "fields": {
+    "id_number": "2310208",
+    "first_name": "James",
+    "last_name": "Bautista",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 37,
+  "fields": {
+    "id_number": "2310209",
+    "first_name": "James",
+    "last_name": "Ocampo",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 38,
+  "fields": {
+    "id_number": "2310210",
+    "first_name": "Sarah",
+    "last_name": "Cruz",
+    "department": "BSHM",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 39,
+  "fields": {
+    "id_number": "2310301",
+    "first_name": "Anna",
+    "last_name": "Reyes",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 40,
+  "fields": {
+    "id_number": "2310302",
+    "first_name": "Sarah",
+    "last_name": "Smith",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 41,
+  "fields": {
+    "id_number": "2310303",
+    "first_name": "Jane",
+    "last_name": "Aquino",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 42,
+  "fields": {
+    "id_number": "2310304",
+    "first_name": "Anna",
+    "last_name": "Bautista",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 43,
+  "fields": {
+    "id_number": "2310305",
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 44,
+  "fields": {
+    "id_number": "2310306",
+    "first_name": "Anna",
+    "last_name": "Santos",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 45,
+  "fields": {
+    "id_number": "2310307",
+    "first_name": "David",
+    "last_name": "Reyes",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 46,
+  "fields": {
+    "id_number": "2310308",
+    "first_name": "Mark",
+    "last_name": "Ocampo",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 47,
+  "fields": {
+    "id_number": "2310309",
+    "first_name": "Paul",
+    "last_name": "Santos",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 48,
+  "fields": {
+    "id_number": "2310310",
+    "first_name": "Jane",
+    "last_name": "Garcia",
+    "department": "BSTM",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 49,
+  "fields": {
+    "id_number": "2310401",
+    "first_name": "Mark",
+    "last_name": "Cruz",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 50,
+  "fields": {
+    "id_number": "2310402",
+    "first_name": "Maria",
+    "last_name": "Bautista",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 51,
+  "fields": {
+    "id_number": "2310403",
+    "first_name": "David",
+    "last_name": "Santos",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 52,
+  "fields": {
+    "id_number": "2310404",
+    "first_name": "Sarah",
+    "last_name": "Smith",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 53,
+  "fields": {
+    "id_number": "2310405",
+    "first_name": "Emily",
+    "last_name": "Smith",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 54,
+  "fields": {
+    "id_number": "2310406",
+    "first_name": "Sarah",
+    "last_name": "Aquino",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 55,
+  "fields": {
+    "id_number": "2310407",
+    "first_name": "Paul",
+    "last_name": "Cruz",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 56,
+  "fields": {
+    "id_number": "2310408",
+    "first_name": "Anna",
+    "last_name": "Santos",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 57,
+  "fields": {
+    "id_number": "2310409",
+    "first_name": "Jane",
+    "last_name": "Ocampo",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 58,
+  "fields": {
+    "id_number": "2310410",
+    "first_name": "Mark",
+    "last_name": "Aquino",
+    "department": "BSED Major in english",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 59,
+  "fields": {
+    "id_number": "2310501",
+    "first_name": "Mark",
+    "last_name": "Bautista",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 60,
+  "fields": {
+    "id_number": "2310502",
+    "first_name": "Emily",
+    "last_name": "Mendoza",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 61,
+  "fields": {
+    "id_number": "2310503",
+    "first_name": "John",
+    "last_name": "Cruz",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 62,
+  "fields": {
+    "id_number": "2310504",
+    "first_name": "Jane",
+    "last_name": "Mendoza",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 63,
+  "fields": {
+    "id_number": "2310505",
+    "first_name": "Jane",
+    "last_name": "Reyes",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 64,
+  "fields": {
+    "id_number": "2310506",
+    "first_name": "John",
+    "last_name": "Reyes",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 65,
+  "fields": {
+    "id_number": "2310507",
+    "first_name": "David",
+    "last_name": "Garcia",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 66,
+  "fields": {
+    "id_number": "2310508",
+    "first_name": "Maria",
+    "last_name": "Doe",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 67,
+  "fields": {
+    "id_number": "2310509",
+    "first_name": "David",
+    "last_name": "Mendoza",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 68,
+  "fields": {
+    "id_number": "2310510",
+    "first_name": "Anna",
+    "last_name": "Santos",
+    "department": "BSED Major in math",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 69,
+  "fields": {
+    "id_number": "2310601",
+    "first_name": "Mark",
+    "last_name": "Aquino",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 70,
+  "fields": {
+    "id_number": "2310602",
+    "first_name": "James",
+    "last_name": "Aquino",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2023,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 71,
+  "fields": {
+    "id_number": "2310603",
+    "first_name": "Maria",
+    "last_name": "Ocampo",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 72,
+  "fields": {
+    "id_number": "2310604",
+    "first_name": "Anna",
+    "last_name": "Cruz",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 73,
+  "fields": {
+    "id_number": "2310605",
+    "first_name": "Paul",
+    "last_name": "Bautista",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2024,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 74,
+  "fields": {
+    "id_number": "2310606",
+    "first_name": "James",
+    "last_name": "Garcia",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 75,
+  "fields": {
+    "id_number": "2310607",
+    "first_name": "Mark",
+    "last_name": "Aquino",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 76,
+  "fields": {
+    "id_number": "2310608",
+    "first_name": "John",
+    "last_name": "Bautista",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 77,
+  "fields": {
+    "id_number": "2310609",
+    "first_name": "David",
+    "last_name": "Cruz",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2022,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.enrolledstudent",
+  "pk": 78,
+  "fields": {
+    "id_number": "2310610",
+    "first_name": "John",
+    "last_name": "Aquino",
+    "department": "BEED",
+    "section": null,
+    "enrollment_year": 2025,
+    "is_activated": false
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 1,
+  "fields": {
+    "name": "Cybersecurity"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 2,
+  "fields": {
+    "name": "Programming"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 3,
+  "fields": {
+    "name": "IT Fiction"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 4,
+  "fields": {
+    "name": "Information Technology"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 5,
+  "fields": {
+    "name": "Criminology & Law"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 6,
+  "fields": {
+    "name": "Hospitality & Culinary"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 7,
+  "fields": {
+    "name": "Tourism & Travel"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 8,
+  "fields": {
+    "name": "Education & Pedagogy"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 9,
+  "fields": {
+    "name": "General Education"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 10,
+  "fields": {
+    "name": "Literature & Poetry"
+  }
+},
+{
+  "model": "catalog.category",
+  "pk": 11,
+  "fields": {
+    "name": "Fiction & Storybooks"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 1,
+  "fields": {
+    "book_id": "B-001",
+    "title": "Penetration Testing",
+    "author": "Georgia Weidman",
+    "category": 1,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 2,
+  "fields": {
+    "book_id": "B-002",
+    "title": "Web Hacker's Handbook",
+    "author": "Dafydd Stuttard",
+    "category": 1,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 3,
+  "fields": {
+    "book_id": "B-003",
+    "title": "Metasploit Guide",
+    "author": "David Kennedy",
+    "category": 1,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 4,
+  "fields": {
+    "book_id": "B-004",
+    "title": "Black Hat Python",
+    "author": "Justin Seitz",
+    "category": 1,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 5,
+  "fields": {
+    "book_id": "B-005",
+    "title": "Social Engineering",
+    "author": "Christopher Hadnagy",
+    "category": 1,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 6,
+  "fields": {
+    "book_id": "B-006",
+    "title": "Python Crash Course",
+    "author": "Eric Matthes",
+    "category": 2,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 7,
+  "fields": {
+    "book_id": "B-007",
+    "title": "Fluent Python",
+    "author": "Luciano Ramalho",
+    "category": 2,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 8,
+  "fields": {
+    "book_id": "B-008",
+    "title": "JavaScript: Good Parts",
+    "author": "Douglas Crockford",
+    "category": 2,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 9,
+  "fields": {
+    "book_id": "B-009",
+    "title": "Django for Beginners",
+    "author": "William S. Vincent",
+    "category": 2,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 10,
+  "fields": {
+    "book_id": "B-010",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": 2,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 11,
+  "fields": {
+    "book_id": "B-011",
+    "title": "Neuromancer",
+    "author": "William Gibson",
+    "category": 3,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 12,
+  "fields": {
+    "book_id": "B-012",
+    "title": "Snow Crash",
+    "author": "Neal Stephenson",
+    "category": 3,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 13,
+  "fields": {
+    "book_id": "B-013",
+    "title": "Ready Player One",
+    "author": "Ernest Cline",
+    "category": 3,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 14,
+  "fields": {
+    "book_id": "B-014",
+    "title": "The Martian",
+    "author": "Andy Weir",
+    "category": 3,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 15,
+  "fields": {
+    "book_id": "B-015",
+    "title": "Daemon",
+    "author": "Daniel Suarez",
+    "category": 3,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 16,
+  "fields": {
+    "book_id": "B-021",
+    "title": "JavaScript 101",
+    "author": "Gabrillo",
+    "category": 2,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 17,
+  "fields": {
+    "book_id": "B-022",
+    "title": "C#",
+    "author": "Christian Wael",
+    "category": 2,
+    "status": "Borrowed"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 18,
+  "fields": {
+    "book_id": "IT-001",
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "category": 4,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 19,
+  "fields": {
+    "book_id": "IT-002",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": 4,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 20,
+  "fields": {
+    "book_id": "CRIM-001",
+    "title": "Criminal Investigation",
+    "author": "Charles Swanson",
+    "category": 5,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 21,
+  "fields": {
+    "book_id": "CRIM-002",
+    "title": "Introduction to Criminology",
+    "author": "Frank Schmalleger",
+    "category": 5,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 22,
+  "fields": {
+    "book_id": "HM-001",
+    "title": "The Professional Chef",
+    "author": "Culinary Institute of America",
+    "category": 6,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 23,
+  "fields": {
+    "book_id": "TM-001",
+    "title": "Tourism: Principles, Practices, Philosophies",
+    "author": "Charles R. Goeldner",
+    "category": 7,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 24,
+  "fields": {
+    "book_id": "ED-001",
+    "title": "Pedagogy of the Oppressed",
+    "author": "Paulo Freire",
+    "category": 8,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 25,
+  "fields": {
+    "book_id": "ED-002",
+    "title": "Educational Psychology",
+    "author": "Anita Woolfolk",
+    "category": 8,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 26,
+  "fields": {
+    "book_id": "GE-001",
+    "title": "Understanding the Self",
+    "author": "Eden Joy Alata",
+    "category": 9,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 27,
+  "fields": {
+    "book_id": "GE-002",
+    "title": "Ethics: Foundations of Moral Valuation",
+    "author": "Oscar Bulaong Jr.",
+    "category": 9,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 28,
+  "fields": {
+    "book_id": "LIT-001",
+    "title": "Noli Me Tangere",
+    "author": "Jose Rizal",
+    "category": 10,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 29,
+  "fields": {
+    "book_id": "LIT-002",
+    "title": "The Iliad and The Odyssey",
+    "author": "Homer",
+    "category": 10,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 30,
+  "fields": {
+    "book_id": "FIC-001",
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "author": "J.K. Rowling",
+    "category": 11,
+    "status": "Available"
+  }
+},
+{
+  "model": "catalog.book",
+  "pk": 31,
+  "fields": {
+    "book_id": "FIC-002",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "category": 11,
+    "status": "Available"
+  }
+}
+]

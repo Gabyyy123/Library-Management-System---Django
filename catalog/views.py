@@ -171,15 +171,16 @@ def edit_profile(request):
     profile = request.user.userprofile
     if request.method == 'POST':
         new_id = request.POST.get('id_number')
-        new_email = request.POST.get('email') # Get the new email
+        new_email = request.POST.get('email')
         
         if new_id:
             profile.id_number = new_id
-            request.user.username = new_id
+            # NOTE: We removed the code here that changed the username, 
+            # because the username is now their name, not their ID!
             
         if new_email:
-            profile.email = new_email # Save to profile
-            request.user.email = new_email # Save to core user
+            profile.email = new_email 
+            request.user.email = new_email 
             
         request.user.save()
             
@@ -421,10 +422,20 @@ def activate_student(request, student_id):
         student = get_object_or_404(EnrolledStudent, id=student_id)
         
         if not student.is_activated:
-            # Create account: Username AND Password are the exact 7-digit ID Number
+            # 1. Format the name into a valid username (e.g., "John Doe" -> "john.doe")
+            base_username = f"{student.first_name.strip()}.{student.last_name.strip()}".replace(" ", "").lower()
+            
+            # 2. Check for duplicates (If there are two John Does, the second becomes john.doe1)
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+
+            # 3. Create the account
             user = User.objects.create_user(
-                username=student.id_number, 
-                password=student.id_number, # No more "cec" prefix
+                username=username,           # Username is now their formatted name
+                password=student.id_number,  # Password is their exact ID number
                 first_name=student.first_name,
                 last_name=student.last_name
             )
@@ -438,7 +449,6 @@ def activate_student(request, student_id):
             student.is_activated = True
             student.save()
             
-    # Redirect back to the masterlist, staying on the same department tab
     return redirect(request.META.get('HTTP_REFERER', 'admin_masterlist'))
 
 @login_required
@@ -486,37 +496,3 @@ def admin_masterlist(request):
     }
     return render(request, 'catalog/admin_masterlist.html', context)
 
-@login_required
-def generate_sample_students(request):
-    if request.user.userprofile.role != 'admin': return redirect('dashboard')
-    
-    # THE FIX: Grab the department from the URL so we know where to redirect back to
-    current_dept = request.GET.get('department', 'BSIT')
-    
-    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED Major in english', 'BSED Major in math', 'BEED']
-    first_names = ["John", "Jane", "Mark", "Maria", "Paul", "Anna", "David", "Sarah", "James", "Emily"]
-    last_names = ["Doe", "Smith", "Garcia", "Reyes", "Cruz", "Bautista", "Ocampo", "Aquino", "Mendoza", "Santos"]
-
-    base_id = 2310000
-    
-    # Generate 10 students for EVERY department (70 total)
-    for d_idx, dept in enumerate(departments):
-        for i in range(1, 11): # Loop 10 times
-            student_id = str(base_id + (d_idx * 100) + i) # Ensures unique 7-digit ID
-            
-            # Randomize enrollment year (between 2022 and 2025) to test the dynamic Year Level
-            random_enrollment = random.choice([2022, 2023, 2024, 2025])
-            
-            EnrolledStudent.objects.get_or_create(
-                id_number=student_id, 
-                defaults={
-                    'first_name': random.choice(first_names), 
-                    'last_name': random.choice(last_names), 
-                    'department': dept,
-                    'enrollment_year': random_enrollment
-                }
-            )
-            
-    # THE FIX: Redirect precisely back to the tab the admin was viewing
-    base_url = reverse('admin_masterlist')
-    return redirect(f"{base_url}?department={current_dept}")
