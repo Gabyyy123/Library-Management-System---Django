@@ -76,7 +76,10 @@
                         <p style="font-size: 11px; color: var(--danger); margin-top: 0; margin-bottom: 8px;">*Warning: Changing this will change your login username.</p>
                         <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
                         
-                        <label style="font-weight:bold; margin-bottom:8px; display:block;">Profile Photo</label>
+                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>
+                        <input type="email" name="email" value="{{ profile.email|default:'' }}" class="form-input" placeholder="Enter an active email for notifications" required>
+                        
+                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Profile Photo</label>
                         <input type="file" name="profile_photo" class="form-input" style="padding: 10px;">
                         
                         <button type="submit" class="btn-submit">Save Changes</button>

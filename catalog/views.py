@@ -170,10 +170,25 @@ def browse_library(request):
 def edit_profile(request):
     profile = request.user.userprofile
     if request.method == 'POST':
-        profile.id_number = request.POST.get('id_number')
-        if 'profile_photo' in request.FILES: profile.profile_photo = request.FILES['profile_photo']
+        new_id = request.POST.get('id_number')
+        new_email = request.POST.get('email') # Get the new email
+        
+        if new_id:
+            profile.id_number = new_id
+            request.user.username = new_id
+            
+        if new_email:
+            profile.email = new_email # Save to profile
+            request.user.email = new_email # Save to core user
+            
+        request.user.save()
+            
+        if 'profile_photo' in request.FILES: 
+            profile.profile_photo = request.FILES['profile_photo']
+            
         profile.save()
         return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+        
     return render(request, 'catalog/edit_profile.html', {'profile': profile, 'active_tab': 'profile'})
 
 @login_required
