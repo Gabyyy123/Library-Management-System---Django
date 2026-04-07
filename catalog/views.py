@@ -496,3 +496,39 @@ def admin_masterlist(request):
     }
     return render(request, 'catalog/admin_masterlist.html', context)
 
+
+@login_required
+def generate_sample_students(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    current_dept = request.GET.get('department', 'BSIT')
+    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED Major in english', 'BSED Major in math', 'BEED']
+    first_names = ["John", "Jane", "Mark", "Maria", "Paul", "Anna", "David", "Sarah", "James", "Emily"]
+    last_names = ["Doe", "Smith", "Garcia", "Reyes", "Cruz", "Bautista", "Ocampo", "Aquino", "Mendoza", "Santos"]
+
+    for d_idx, dept in enumerate(departments):
+        for i in range(1, 11):
+            student_id = str(2310000 + (d_idx * 100) + i) 
+            EnrolledStudent.objects.get_or_create(
+                id_number=student_id, 
+                defaults={'first_name': random.choice(first_names), 'last_name': random.choice(last_names), 'department': dept, 'enrollment_year': random.choice([2022, 2023, 2024, 2025])}
+            )
+    return redirect(f"{reverse('admin_masterlist')}?department={current_dept}")
+
+@login_required
+def generate_sample_books(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    category_names = ['Information Technology', 'Criminology & Law', 'Hospitality & Culinary', 'Tourism & Travel', 'Education & Pedagogy', 'General Education', 'Literature & Poetry', 'Fiction & Storybooks']
+    categories = {}
+    for name in category_names:
+        cat, _ = Category.objects.get_or_create(name=name)
+        categories[name] = cat
+
+    sample_books = [
+        {'id': 'IT-001', 'title': 'Intro to Algorithms', 'author': 'Thomas Cormen', 'cat': 'Information Technology'},
+        {'id': 'CRIM-001', 'title': 'Criminal Investigation', 'author': 'Charles Swanson', 'cat': 'Criminology & Law'},
+        {'id': 'HM-001', 'title': 'The Professional Chef', 'author': 'CIA', 'cat': 'Hospitality & Culinary'},
+        {'id': 'FIC-001', 'title': 'Harry Potter', 'author': 'J.K. Rowling', 'cat': 'Fiction & Storybooks'},
+    ]
+    for b in sample_books:
+        Book.objects.get_or_create(book_id=b['id'], defaults={'title': b['title'], 'author': b['author'], 'category': categories[b['cat']], 'status': 'Available'})
+    return redirect(request.META.get('HTTP_REFERER', 'admin_management'))

@@ -66,7 +66,11 @@
                         <input type="hidden" name="department" value="{{ selected_dept }}">
                         <input type="text" name="q" class="form-input" style="margin-bottom:0;" placeholder="Search Name or ID in {{ selected_dept }}..." value="{{ search_q }}">
                         <button type="submit" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--primary);">Find</button>
+
+                        <a href="{% url 'generate_sample_students' %}?department={{ selected_dept }}" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--warning); color:#000;">Generate Students</a>
+                       
                         {% if search_q %}
+
                             <a href="{% url 'admin_masterlist' %}?department={{ selected_dept }}" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--text-secondary);">Clear</a>
                         {% endif %}
                     </form>
