@@ -15,6 +15,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.http import HttpResponse
 import random
 from django.urls import reverse
+import openpyxl
 
 def user_login(request):
     if request.method == 'POST':
@@ -173,14 +174,22 @@ def edit_profile(request):
         new_id = request.POST.get('id_number')
         new_email = request.POST.get('email')
         
+        # NEW: Catch the first and last name from the form
+        new_fname = request.POST.get('first_name')
+        new_lname = request.POST.get('last_name')
+        
         if new_id:
             profile.id_number = new_id
-            # NOTE: We removed the code here that changed the username, 
-            # because the username is now their name, not their ID!
             
         if new_email:
             profile.email = new_email 
             request.user.email = new_email 
+            
+        # NEW: Save the updated names to the core User model
+        if new_fname:
+            request.user.first_name = new_fname
+        if new_lname:
+            request.user.last_name = new_lname
             
         request.user.save()
             
@@ -470,7 +479,7 @@ def change_password(request):
 def admin_masterlist(request):
     if request.user.userprofile.role != 'admin': return redirect('dashboard')
     
-    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED Major in english', 'BSED Major in math', 'BEED']
+    departments = ['BSIT', 'BSCRIM', 'BSHM', 'BSTM', 'BSED-English', 'BSED-Math', 'BEED']
     selected_dept = request.GET.get('department', 'BSIT')
     search_q = request.GET.get('q', '')
     
@@ -496,3 +505,124 @@ def admin_masterlist(request):
     }
     return render(request, 'catalog/admin_masterlist.html', context)
 
+
+@login_required
+def update_student_status(request, student_id):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    if request.method == 'POST':
+        student = get_object_or_404(EnrolledStudent, id=student_id)
+        new_status = request.POST.get('status')
+        
+        # Update Masterlist record
+        student.enrollment_status = new_status
+        student.save()
+
+        # Update Login Account access
+        if student.is_activated:
+            try:
+                profile = UserProfile.objects.get(id_number=student.id_number)
+                user = profile.user
+                if new_status == 'Enrolled':
+                    user.is_active = True
+                else:
+                    user.is_active = False 
+                user.save()
+            except UserProfile.DoesNotExist:
+                pass
+                
+    return redirect(request.META.get('HTTP_REFERER', 'admin_masterlist'))
+
+@login_required
+def bulk_sync_students(request):
+    if request.user.userprofile.role != 'admin': return redirect('dashboard')
+    
+    if request.method == 'POST' and request.FILES.get('excel_file'):
+        excel_file = request.FILES['excel_file']
+        
+        if not (excel_file.name.endswith('.xlsx') or excel_file.name.endswith('.xls')):
+            return redirect('admin_masterlist')
+            
+        try:
+            wb = openpyxl.load_workbook(excel_file, data_only=True)
+            sheet = wb.active
+            
+            # Map headers to lowercase for easier finding
+            headers = [str(cell.value).strip().lower() if cell.value else '' for cell in sheet[1]]
+            
+            id_idx = headers.index('id_number')
+            fname_idx = headers.index('first_name')
+            lname_idx = headers.index('last_name')
+            dept_idx = headers.index('department')
+            year_idx = headers.index('enrollment_year')
+            
+            officially_enrolled_ids = set()
+            
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                # --- ID NUMBER CLEANER (Removes the .0) ---
+                raw_id = row[id_idx]
+                if isinstance(raw_id, float):
+                    student_id = str(int(raw_id)) # Converts 2310102.0 to "2310102"
+                else:
+                    student_id = str(raw_id).strip() if raw_id else ''
+                
+                if not student_id or student_id == 'None': continue
+                
+                officially_enrolled_ids.add(student_id)
+                
+                # Clean other fields
+                first_name = str(row[fname_idx]).strip() if row[fname_idx] else 'Unknown'
+                last_name = str(row[lname_idx]).strip() if row[lname_idx] else 'Unknown'
+                department = str(row[dept_idx]).strip() if row[dept_idx] else 'Unknown'
+                
+                try:
+                    enroll_year = int(row[year_idx])
+                except (ValueError, TypeError):
+                    enroll_year = date.today().year
+                
+                # Create or Update
+                student, created = EnrolledStudent.objects.get_or_create(
+                    id_number=student_id,
+                    defaults={
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'department': department,
+                        'enrollment_year': enroll_year,
+                        'enrollment_status': 'Enrolled'
+                    }
+                )
+                
+                if not created:
+                    student.enrollment_status = 'Enrolled'
+                    student.department = department # Updates dept if you changed it in Excel
+                    student.enrollment_year = enroll_year
+                    student.save()
+                    
+                # Auto-unlock account if active
+                if student.is_activated:
+                    try:
+                        profile = UserProfile.objects.get(id_number=student.id_number)
+                        profile.user.is_active = True
+                        profile.user.save()
+                    except UserProfile.DoesNotExist:
+                        pass
+
+            # Sweep: Mark missing students as Dropped
+            missing_students = EnrolledStudent.objects.exclude(id_number__in=officially_enrolled_ids)
+            for s in missing_students:
+                s.enrollment_status = 'Dropped'
+                s.save()
+                if s.is_activated:
+                    try:
+                        p = UserProfile.objects.get(id_number=s.id_number)
+                        p.user.is_active = False 
+                        p.user.save()
+                    except UserProfile.DoesNotExist:
+                        pass
+                        
+        except Exception as e:
+            print("--- BULK SYNC ERROR ---")
+            print(str(e))
+            print("-----------------------")
+            
+    return redirect(request.META.get('HTTP_REFERER', 'admin_masterlist'))

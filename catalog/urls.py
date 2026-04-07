@@ -35,5 +35,8 @@ path('activate_student/<int:student_id>/', views.activate_student, name='activat
     path('change_password/', views.change_password, name='change_password'),
     path('admin_masterlist/', views.admin_masterlist, name='admin_masterlist'),
     path('activate_student/<int:student_id>/', views.activate_student, name='activate_student'),
-
+path('update_status/<int:student_id>/', views.update_student_status, name='update_student_status'),
+path('bulk_sync_students/', views.bulk_sync_students, name='bulk_sync_students'),
+path('update_status/<int:student_id>/', views.update_student_status, name='update_student_status'),
+path('bulk_sync_students/', views.bulk_sync_students, name='bulk_sync_students'),
 ]

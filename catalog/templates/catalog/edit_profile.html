@@ -22,9 +22,9 @@
             {% endif %}
             
             {% if profile.role == 'admin' %}
-                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+                <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
             {% else %}
-                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.username }}</h2>
+                <h2 style="margin: 0; color: inherit; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
             {% endif %}
             
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
@@ -60,7 +60,7 @@
                 <button class="hamburger" id="burger">☰</button>
                 <div>
                     <h1 style="margin:0; font-size:22px;">Profile Settings</h1>
-                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Update ID and Image.</p>
+                    <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Update ID, Name, and Image.</p>
                 </div>
             </div>
             <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
@@ -72,8 +72,19 @@
                 <div class="card profile-form-card" style="width: 100%; margin: 0;">
                     <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" onsubmit="confirmSubmit(event, this, 'Save?', 'Update details?', 'Save', '#4f46e5')">
                         {% csrf_token %}
-                        <label style="font-weight:bold; margin-bottom:2px; display:block;">Institution ID</label>
                         
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="font-weight:bold; margin-bottom:8px; display:block;">First Name <span style="color:var(--danger);">*</span></label>
+                                <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input" required>
+                            </div>
+                            <div>
+                                <label style="font-weight:bold; margin-bottom:8px; display:block;">Last Name <span style="color:var(--danger);">*</span></label>
+                                <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Institution ID</label>
                         <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
                         
                         <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>

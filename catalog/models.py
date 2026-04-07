@@ -7,7 +7,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     id_number = models.CharField(max_length=50, blank=True)
-    # ADD THIS LINE BELOW
     email = models.EmailField(max_length=255, blank=True, null=True)
     profile_photo = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
@@ -62,16 +61,27 @@ class MeetingRoomSchedule(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Upcoming')
 
 class EnrolledStudent(models.Model):
+    # 1. 'Safe' Status Choices (Prevents deleting historical student records)
+    STATUS_CHOICES = (
+        ('Enrolled', 'Enrolled'),
+        ('Dropped', 'Dropped'),
+        ('Transferred', 'Transferred'),
+        ('Graduated', 'Graduated')
+    )
+
     id_number = models.CharField(max_length=50, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     department = models.CharField(max_length=100, blank=True, null=True)
     section = models.CharField(max_length=50, blank=True, null=True)
     
-    # NEW: Tracks when they started to calculate their year dynamically
+    # Tracks when they started to calculate their year dynamically
     enrollment_year = models.IntegerField(default=date.today().year)
     
     is_activated = models.BooleanField(default=False) 
+    
+    # 2. NEW: Safely track their status instead of deleting them
+    enrollment_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Enrolled')
 
     @property
     def current_year_level(self):
@@ -91,7 +101,10 @@ class EnrolledStudent(models.Model):
         elif year_diff > 4: return f"{year_diff}th Year"
         else: return "Incoming"
 
+    @property
+    def expected_username(self):
+        """Calculates the exact username preview for the UI popup"""
+        return f"{self.first_name.strip()}.{self.last_name.strip()}".replace(" ", "").lower()
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.id_number} - {self.department})"
-
-    

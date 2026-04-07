@@ -20,7 +20,7 @@
             {% else %}
                 <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
             {% endif %}
-            <h2 style="margin: 0; font-size: 18px;">{{ user.username }}</h2>
+          <h2 style="margin: 0; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
         <div class="sidebar-nav-container">

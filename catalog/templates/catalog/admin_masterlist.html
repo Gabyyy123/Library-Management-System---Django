@@ -22,7 +22,7 @@
     <div class="sidebar" id="sidebar">
         <div class="profile-section">
             {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
-            <h2 style="margin: 0; color: #fff; font-size: 18px;">{{ user.username }}</h2>
+            <h2 style="margin: 0; font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</h2>
             <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
 
@@ -61,74 +61,149 @@
             </div>
 
             <div class="card" style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; align-items: center;">
+                    
                     <form method="GET" action="{% url 'admin_masterlist' %}" style="display:flex; gap:10px; flex: 1; min-width: 300px;">
                         <input type="hidden" name="department" value="{{ selected_dept }}">
                         <input type="text" name="q" class="form-input" style="margin-bottom:0;" placeholder="Search Name or ID in {{ selected_dept }}..." value="{{ search_q }}">
                         <button type="submit" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--primary);">Find</button>
-                       
                         {% if search_q %}
-
                             <a href="{% url 'admin_masterlist' %}?department={{ selected_dept }}" class="btn-submit" style="width:auto; padding: 12px 20px; background:var(--text-secondary);">Clear</a>
                         {% endif %}
                     </form>
+
+                    <!-- Excel Sync Form -->
+                    <form method="POST" action="{% url 'bulk_sync_students' %}" enctype="multipart/form-data" style="display:flex; gap:10px; align-items:center; background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; border: 1px solid var(--success);">
+                        {% csrf_token %}
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 11px; font-weight: bold; color: var(--success); margin-bottom: 3px;">Bulk Sync Enrollment (.XLSX)</label>
+                            <input type="file" name="excel_file" accept=".xlsx, .xls" required style="font-size: 12px; color: var(--text-primary);">
+                        </div>
+                        <button type="submit" class="btn-submit" style="width:auto; padding: 10px 15px; background:var(--success);" onclick="confirmSubmit(event, this.form, 'Sync Database?', 'This will verify all enrolled students and drop anyone missing from the file.', 'Yes, Sync', '#10b981')">
+                            <i class="fa-solid fa-file-excel"></i> Run Sync
+                        </button>
+                    </form>
+
                 </div>
+                <!-- Updated instruction text below -->
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 10px 0 0 0;">*Excel headers must be exactly: <strong>id_number, first_name, last_name, department, enrollment_year</strong></p>
             </div>
 
             <div class="card">
                 <h2 style="margin-top:0;">{{ selected_dept }} Students</h2>
                 <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
                     <table>
-                        <tr>
-                            <th>ID Number</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Year Level</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        {% for student in masterlist %}
-                        <tr>
-                            <td><strong>{{ student.id_number }}</strong></td>
-                            <td>{{ student.first_name }}</td>
-                            <td>{{ student.last_name }}</td>
-                            
-                            <td><span style="background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">{{ student.current_year_level }}</span></td>
-                            
-                            <td>
-                                {% if student.is_activated %}
-                                    <span style="color:var(--success); font-weight:bold; font-size: 13px;"><i class="fa-solid fa-check-circle"></i> Active</span>
-                                {% else %}
-                                    <span style="color:var(--text-secondary); font-weight:bold; font-size: 13px;"><i class="fa-solid fa-clock"></i> Pending</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if not student.is_activated %}
-                                    <a href="{% url 'activate_student' student.id %}" class="btn-submit" style="background:var(--success); padding: 8px 15px; font-size: 13px; width: auto; display: inline-block;" onclick="confirmAction(event, 'Activate Account?', 'This will generate a login for {{ student.first_name }}. Username will be their name (e.g. firstname.lastname) and Password will be {{ student.id_number }}.', 'Yes, Activate', '#10b981')">Activate</a>
-                                {% else %}
-                                    <span style="font-size:12px; color:var(--text-secondary);">Account Created</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" style="text-align:center; padding: 30px; color:var(--text-secondary);">No students found for {{ selected_dept }}.</td>
-                        </tr>
-                        {% endfor %}
+                        <thead>
+                            <tr>
+                                <th>ID Number</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Year Level</th>
+                                <th>Enrollment</th> 
+                                <th>Account</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in masterlist %}
+                            <tr>
+                                <td><strong>{{ student.id_number }}</strong></td>
+                                <td>{{ student.first_name }}</td>
+                                <td>{{ student.last_name }}</td>
+                                <td><span style="background: var(--border); padding: 4px 8px; border-radius: 4px; font-size: 12px;">{{ student.current_year_level }}</span></td>
+                                
+                                <td>
+                                    <form method="POST" action="{% url 'update_student_status' student.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <select name="status" onchange="this.form.submit()" style="padding: 5px; border-radius: 4px; font-size: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-primary); cursor: pointer; outline: none;">
+                                            <option value="Enrolled" {% if student.enrollment_status == 'Enrolled' %}selected{% endif %}>🟢 Enrolled</option>
+                                            <option value="Dropped" {% if student.enrollment_status == 'Dropped' %}selected{% endif %}>🔴 Dropped</option>
+                                            <option value="Transferred" {% if student.enrollment_status == 'Transferred' %}selected{% endif %}>🟠 Transferred</option>
+                                            <option value="Graduated" {% if student.enrollment_status == 'Graduated' %}selected{% endif %}>🎓 Graduated</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                
+                                <td>
+                                    {% if student.is_activated %}
+                                        {% if student.enrollment_status == 'Enrolled' %}
+                                            <span style="color:var(--success); font-weight:bold; font-size: 12px;"><i class="fa-solid fa-check-circle"></i> Active</span>
+                                        {% else %}
+                                            <span style="color:var(--danger); font-weight:bold; font-size: 12px;"><i class="fa-solid fa-lock"></i> Locked</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span style="color:var(--text-secondary); font-weight:bold; font-size: 12px;"><i class="fa-solid fa-clock"></i> Pending</span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td>
+                                    {% if not student.is_activated %}
+                                        <a href="{% url 'activate_student' student.id %}" class="btn-submit" style="background:var(--success); padding: 8px 15px; font-size: 13px; width: auto; display: inline-block;" onclick="confirmAction(event, 'Activate Account?', 'This will generate a login for {{ student.first_name }}. Username will be {{ student.expected_username }} and Password will be {{ student.id_number }}.', 'Yes, Activate', '#10b981')">Activate</a>
+                                    {% else %}
+                                        <span style="font-size:12px; color:var(--text-secondary);">Account Created</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding: 30px; color:var(--text-secondary);">No students found for {{ selected_dept }}.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
             </div>
-
         </main>
     </div>
     
     <script>
-        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'info', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
-        const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
+        function confirmAction(e, t, s, cT, cC) { 
+            e.preventDefault(); 
+            const url = e.currentTarget.href; 
+            Swal.fire({ 
+                title: t, 
+                text: s, 
+                icon: 'info', 
+                showCancelButton: true, 
+                confirmButtonColor: cC, 
+                confirmButtonText: cT, 
+                background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', 
+                color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' 
+            }).then((r) => { if(r.isConfirmed) window.location.href = url; }); 
+        }
+
+        function confirmSubmit(e, form, t, s, cT, cC) { 
+            e.preventDefault(); 
+            Swal.fire({ 
+                title: t, 
+                text: s, 
+                icon: 'warning', 
+                showCancelButton: true, 
+                confirmButtonColor: cC, 
+                confirmButtonText: cT, 
+                background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', 
+                color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' 
+            }).then((r) => { if(r.isConfirmed) form.submit(); }); 
+        }
+        
+        const burger = document.getElementById('burger'); 
+        const sidebar = document.getElementById('sidebar'); 
+        const overlay = document.getElementById('overlay');
+        
         burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
         overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
-        if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
-        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+        
+        if(localStorage.getItem('theme') === 'dark') { 
+            document.body.classList.add('dark-mode'); 
+            document.getElementById('tIcon').innerText = '🌙'; 
+        }
+        
+        document.getElementById('themeToggle').onclick = () => { 
+            document.body.classList.toggle('dark-mode'); 
+            const isD = document.body.classList.contains('dark-mode'); 
+            localStorage.setItem('theme', isD?'dark':'light'); 
+            document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; 
+        };
     </script>
 </body>
 </html>
