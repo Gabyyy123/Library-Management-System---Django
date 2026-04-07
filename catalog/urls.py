@@ -36,7 +36,4 @@ path('activate_student/<int:student_id>/', views.activate_student, name='activat
     path('admin_masterlist/', views.admin_masterlist, name='admin_masterlist'),
     path('activate_student/<int:student_id>/', views.activate_student, name='activate_student'),
 
-
-    path('generate_sample_students/', views.generate_sample_students, name='generate_sample_students'),
-    path('generate_sample_books/', views.generate_sample_books, name='generate_sample_books'),
 ]
