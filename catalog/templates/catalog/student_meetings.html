@@ -83,7 +83,20 @@
                     <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Book and manage your study sessions.</p>
                 </div>
             </div>
-            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">🌙</span></div>
+            
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="position: relative; cursor: pointer;">
+                    <i class="fa-solid fa-bell" style="font-size: 20px; color: var(--text-secondary);"></i>
+                    <span id="notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 10px; border: 2px solid var(--bg-color);">0</span>
+                    
+                    <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 30px; width: 250px; background: #1e293b; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; padding: 10px;">
+                        <h4 style="margin: 0 0 10px 0; color: white; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">Recent Alerts</h4>
+                        <div id="notif-list" style="max-height: 200px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+
+                <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">🌙</span></div>
+            </div>
         </header>
 
         <main class="scrollable-content">
@@ -136,7 +149,7 @@
                         <h2><i class="fa-solid fa-clock-rotate-left"></i> My Appointments</h2>
                         <div style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
                             {% for appointment in appointments %}
-                                <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                                <div id="meeting-{{ appointment.id }}" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px; scroll-margin-top: 100px;">
                                     <strong>{{ appointment.meeting_date|date:'M d, Y' }}</strong><br>
                                     <span style="font-size: 13px; color: var(--text-secondary);">{{ appointment.start_time|time:'h:i A' }} - {{ appointment.end_time|time:'h:i A' }}</span><br>
                                     
@@ -228,6 +241,48 @@
             localStorage.setItem('theme', isD ? 'dark' : 'light'); 
             document.getElementById('tIcon').innerText = isD ? '🌙' : '☀️'; 
         };
+
+       // ==========================================
+        // REAL-TIME NOTIFICATION SYSTEM (Universal + Clickable)
+        // ==========================================
+        const notifBadge = document.getElementById('notif-badge');
+        const notifDropdown = document.getElementById('notif-dropdown');
+        const notifList = document.getElementById('notif-list');
+        
+        // Safety check to ensure the bell exists on the page
+        if (document.querySelector('.fa-bell')) {
+            document.querySelector('.fa-bell').parentElement.onclick = () => {
+                notifDropdown.style.display = notifDropdown.style.display === 'none' ? 'block' : 'none';
+            };
+
+            function fetchNotifications() {
+                fetch('/api/notifications/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.count > 0) {
+                        notifBadge.innerText = data.count;
+                        notifBadge.style.display = 'block';
+                        
+                        notifList.innerHTML = ''; 
+                        data.alerts.forEach(alert => {
+                            // Notice this is now a clickable <a> link mapping to alert.url!
+                            notifList.innerHTML += `
+                                <a href="${alert.url}" style="display: block; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); text-decoration: none; cursor: pointer; transition: background 0.2s;">
+                                    <div style="color: white; font-weight: bold; font-size: 11px;">${alert.message}</div>
+                                    <div style="color: #94a3b8; font-size: 9px; margin-top: 3px;">${alert.time}</div>
+                                </a>
+                            `;
+                        });
+                    } else {
+                        notifBadge.style.display = 'none';
+                        notifList.innerHTML = '<p style="color: #64748b; font-size: 11px; text-align: center;">No new alerts.</p>';
+                    }
+                });
+            }
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 5000); 
+        }
     </script>
 </body>
 </html>

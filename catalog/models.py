@@ -127,3 +127,16 @@ class Meeting(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.meeting_date}"
+
+class Notification(models.Model):
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    target_url = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at'] 
+
+    def __str__(self):
+        return f"To {self.recipient.username}: {self.message}"

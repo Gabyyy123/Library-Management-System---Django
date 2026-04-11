@@ -42,5 +42,7 @@ path('bulk_sync_students/', views.bulk_sync_students, name='bulk_sync_students')
 path('my-meetings/', views.student_meetings, name='student_meetings'),
 path('update_meeting_status/<int:meeting_id>/', views.update_meeting_status, name='update_meeting_status'),
     path('verify/<str:id_number>/', views.verify_student, name='verify_student'),
+    path('api/notifications/', views.get_notifications, name='api_notifications'),
+    path('notifications/read/<int:notif_id>/', views.read_notification, name='read_notification'),
 
 ]
