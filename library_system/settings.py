@@ -180,3 +180,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'johnlloydgabrillo@gmail.com' # The extra Gmail you just opened
 EMAIL_HOST_PASSWORD = 'bmej zfhc zwxt ufxk'      # The code from Step 1 (no spaces)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
