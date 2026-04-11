@@ -8,7 +8,41 @@
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        /* Responsive 2-Column Grid */
+        .meeting-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Default: Stacked vertically for mobile/laptops */
+            gap: 20px;
+        }
+        
+        /* Only go side-by-side on very large desktop screens (1200px or wider) */
+        @media(min-width: 1200px) {
+            .meeting-dashboard-grid {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        /* Calendar Responsive Fixes */
+        .fc .fc-toolbar { flex-wrap: wrap; gap: 10px; } /* Allows buttons to wrap on small screens */
+        .fc .fc-toolbar-title { font-size: 1.2em !important; } /* Scales down title */
+
+        /* FullCalendar Dark Mode Overrides */
+        body.dark-mode .fc { color: var(--text-primary); }
+        body.dark-mode .fc-theme-standard td, 
+        body.dark-mode .fc-theme-standard th, 
+        body.dark-mode .fc-theme-standard .fc-scrollgrid { border-color: var(--border); }
+        body.dark-mode .fc .fc-button-primary { background-color: var(--primary); border-color: var(--primary); }
+        body.dark-mode .fc .fc-button-primary:not(:disabled):active, 
+        body.dark-mode .fc .fc-button-primary:not(:disabled).fc-button-active { background-color: #3730a3; }
+        body.dark-mode .fc .fc-day-today { background-color: rgba(79, 70, 229, 0.15) !important; }
+        body.dark-mode .fc .fc-list-day-cushion { background-color: var(--border); }
+    </style>
 </head>
 <body>
     <div class="sidebar-overlay" id="overlay"></div>
@@ -68,46 +102,68 @@
                 {% endfor %}
             {% endif %}
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
-                <div class="card" style="margin: 0;">
-                    <h2><i class="fa-solid fa-calendar-plus"></i> Book Meeting Room</h2>
-                    <form method="POST" action="{% url 'student_meetings' %}">
-                        {% csrf_token %}
-                        
-                        <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Date</label>
-                        <input type="date" name="meeting_date" class="form-input" required>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Start Time</label>
-                                <input type="time" name="start_time" class="form-input" required>
+            <div class="meeting-dashboard-grid">
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <div class="card" style="margin: 0;">
+                        <h2><i class="fa-solid fa-calendar-plus"></i> Book Meeting Room</h2>
+                        <form method="POST" action="{% url 'student_meetings' %}">
+                            {% csrf_token %}
+                            
+                            <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Date</label>
+                            <input type="date" name="meeting_date" class="form-input" min="{{ today_string }}" required>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Start Time</label>
+                                    <input type="time" name="start_time" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">End Time</label>
+                                    <input type="time" name="end_time" class="form-input" required>
+                                </div>
                             </div>
-                            <div>
-                                <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">End Time</label>
-                                <input type="time" name="end_time" class="form-input" required>
-                            </div>
+                            
+                            <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Purpose of Meeting</label>
+                            <textarea name="purpose" class="form-input" rows="3" placeholder="e.g. Group Project Study" required></textarea>
+                            
+                            <button type="submit" class="btn-submit" style="background: var(--primary);">Submit Appointment</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin: 0; flex-grow: 1;">
+                        <h2><i class="fa-solid fa-clock-rotate-left"></i> My Appointments</h2>
+                        <div style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                            {% for appointment in appointments %}
+                                <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                                    <strong>{{ appointment.meeting_date|date:'M d, Y' }}</strong><br>
+                                    <span style="font-size: 13px; color: var(--text-secondary);">{{ appointment.start_time|time:'h:i A' }} - {{ appointment.end_time|time:'h:i A' }}</span><br>
+                                    
+                                    {% if appointment.status == 'Pending' %}
+                                        <span style="color: var(--warning); font-size: 12px; font-weight: bold;">⏳ Pending</span>
+                                    {% elif appointment.status == 'Approved' %}
+                                        <span style="color: var(--success); font-size: 12px; font-weight: bold;">🟢 Approved</span>
+                                    {% else %}
+                                        <span style="color: var(--danger); font-size: 12px; font-weight: bold;">🔴 Rejected</span>
+                                    {% endif %}
+                                </div>
+                            {% empty %}
+                                <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                                    <p style="margin: 0; font-size: 13px;">No meeting requests yet.</p>
+                                </div>
+                            {% endfor %}
                         </div>
-                        
-                        <label style="font-size: 12px; font-weight: bold; margin-bottom: 5px; display: block;">Purpose of Meeting</label>
-                        <textarea name="purpose" class="form-input" rows="3" placeholder="e.g. Group Project Study" required></textarea>
-                        
-                        <button type="submit" class="btn-submit" style="background: var(--primary);">Submit Appointment</button>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="card" style="margin: 0;">
-                    <h2><i class="fa-solid fa-calendar-check"></i> My Appointments</h2>
+                    <h2><i class="fa-regular fa-calendar-check"></i> Room Availability</h2>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: -10px; margin-bottom: 15px;">
+                        Check for available time slots. <span style="color: var(--danger); font-weight: bold;">Red blocks</span> indicate times that are already booked.
+                    </p>
                     
-                    <div style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">
-                        <span>Date & Time</span>
-                        <span>Status</span>
-                    </div>
-
-                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                        <i class="fa-regular fa-calendar-xmark" style="font-size: 30px; margin-bottom: 10px; opacity: 0.5;"></i>
-                        <p style="margin: 0; font-size: 14px;">No meeting requests.</p>
-                    </div>
-
+                    <div id="calendar" style="min-height: 500px; font-size: 14px;"></div>
                 </div>
 
             </div>
@@ -115,11 +171,63 @@
     </div>
     
     <script>
-        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: '#1e293b', color: '#fff' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        // FULLCALENDAR INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek', 
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '07:00:00', 
+                slotMaxTime: '19:00:00', 
+                allDaySlot: false,
+                
+                // NEW RESPONSIVE FIXES:
+                height: 'auto', 
+                eventDisplay: 'block', 
+                
+                events: [
+                    {% for slot in booked_slots %}
+                    {
+                        title: 'Booked',
+                        start: '{{ slot.meeting_date|date:"Y-m-d" }}T{{ slot.start_time|time:"H:i:s" }}',
+                        end: '{{ slot.meeting_date|date:"Y-m-d" }}T{{ slot.end_time|time:"H:i:s" }}',
+                        color: '#ef4444', 
+                        textColor: '#ffffff'
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            });
+            
+            calendar.render();
+        });
+
+        // SWEETALERT CONFIRMATION
+        function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT, background: document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff', color: document.body.classList.contains('dark-mode') ? '#fff' : '#1e293b' }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        
+        // SIDEBAR TOGGLE
         const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
         burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
         overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
-        document.body.classList.add('dark-mode'); 
+        
+        // THEME TOGGLE
+        if(localStorage.getItem('theme') === 'dark') { 
+            document.body.classList.add('dark-mode'); 
+            document.getElementById('tIcon').innerText = '🌙'; 
+        } else {
+            document.getElementById('tIcon').innerText = '☀️'; 
+        }
+        
+        document.getElementById('themeToggle').onclick = () => { 
+            document.body.classList.toggle('dark-mode'); 
+            const isD = document.body.classList.contains('dark-mode'); 
+            localStorage.setItem('theme', isD ? 'dark' : 'light'); 
+            document.getElementById('tIcon').innerText = isD ? '🌙' : '☀️'; 
+        };
     </script>
 </body>
 </html>

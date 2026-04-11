@@ -4,11 +4,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital ID</title>
+    <title>Digital ID - CEC Library</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        /* * DIGITAL WALLET PASS STYLE */
+        .id-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .pass-card {
+            background: linear-gradient(145deg, #2a164d 0%, #111827 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pass-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .pass-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 15px 0;
+            border: none;
+        }
+
+        .pass-body {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .pass-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .pass-photo {
+            width: 90px;
+            height: 110px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        .pass-badge {
+            padding: 5px 18px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-enrolled .pass-photo { border: 2px solid #10b981; }
+        .status-enrolled .pass-badge { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        
+        .status-dropped .pass-photo { border: 2px solid #ef4444; }
+        .status-dropped .pass-badge { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .pass-right {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pass-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .pass-id {
+            font-family: 'Courier New', Courier, monospace;
+            color: #818cf8;
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .pass-school {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .pass-role {
+            font-size: 11px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .pass-footer {
+            margin-top: 20px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pass-validity span {
+            font-size: 9px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .pass-validity strong {
+            display: block;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .status-enrolled .pass-validity strong { color: #10b981; }
+        .status-dropped .pass-validity strong { color: #ef4444; }
+
+        .pass-qr {
+            width: 55px;
+            height: 55px;
+            background: white;
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .btn-download {
+            background: #10b981;
+            color: white;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+            transition: background 0.2s;
+        }
+
+        .btn-download:hover {
+            background: #059669;
+        }
+    </style>
 </head>
 <body class="{% if profile.role == 'admin' %}admin-mode{% endif %}">
     <div class="sidebar-overlay" id="overlay"></div>
@@ -19,14 +198,8 @@
             {% else %}
                 <div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>
             {% endif %}
-            <h2 style="margin: 0; font-size: 18px;">
-    {% if user.first_name or user.last_name %}
-        {{ user.first_name }} {{ user.last_name }}
-    {% else %}
-        {{ user.username }}
-    {% endif %}
-</h2>
-            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+            <h2 style="margin: 0; font-size: 18px;">{{ user.first_name }} {{ user.last_name|default:user.username }}</h2>
+            <p style="color: var(--text-secondary); font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
 
         <div class="sidebar-nav-container">
@@ -36,19 +209,16 @@
                 <a href="{% url 'admin_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
                 <a href="{% url 'admin_history' %}" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
                 <a href="{% url 'admin_management' %}" class="nav-link"><i class="fa-solid fa-gears"></i> Manage</a>
-                
-<a href="{% url 'admin_user_logs' %}" class="nav-link {% if active_tab == 'user_logs' %}active{% endif %}"><i class="fa-solid fa-users"></i> User Logs</a>
-<a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
+                <a href="{% url 'admin_user_logs' %}" class="nav-link"><i class="fa-solid fa-users"></i> User Logs</a>
+                <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
             {% else %}
                 <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-house"></i> Home</a>
                 <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
-                <a href="{% url 'student_meetings' %}" class="nav-link {% if active_tab == 'meetings' %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
+                <a href="{% url 'student_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             {% endif %}
             
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
-            
-<a href="{% url 'digital_id' %}" class="nav-link {% if active_tab == 'digital_id' %}active{% endif %}"><i class="fa-solid fa-id-card"></i> Digital ID</a>
-            
+            <a href="{% url 'digital_id' %}" class="nav-link active"><i class="fa-solid fa-id-card"></i> Digital ID</a>
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
@@ -62,60 +232,91 @@
                     <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Your CEC Library Pass.</p>
                 </div>
             </div>
+            
             <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
         </header>
 
-        <main class="scrollable-content flex-center-top">
-            <div style="display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; max-width: 500px; padding-top: 20px;">
-                <div class="id-card-container" style="padding: 0;">
-                    <div class="id-card-landscape" id="capture-id">
-                        <div class="id-header-landscape">
-                            <h3>CEC LIBRARY PASS</h3>
-                            <i class="fa fa-wifi" style="opacity: 0.7;"></i>
+        <main class="scrollable-content">
+            <div class="id-container">
+                
+                <div id="capture-id" class="pass-card {% if status == 'Enrolled' %}status-enrolled{% else %}status-dropped{% endif %}">
+                    
+                    <div class="pass-header">
+                        <span>CEC LIBRARY PASS</span>
+                        <i class="fa-solid fa-wifi" style="opacity: 0.8;"></i>
+                    </div>
+                    
+                    <hr class="pass-divider">
+                    
+                    <div class="pass-body">
+                        <div class="pass-left">
+                            {% if profile.profile_photo %}
+                                <img src="{{ profile.profile_photo.url }}" class="pass-photo" crossorigin="anonymous">
+                            {% else %}
+                                <div class="pass-photo">NO PHOTO</div>
+                            {% endif %}
+                            
+                            <div class="pass-badge">
+                                {{ status|default:"ACTIVE" }}
+                            </div>
                         </div>
-                        <div class="id-body-landscape">
-                            <div class="id-left-landscape">
-                                {% if profile.profile_photo %}
-                                    <img src="{{ profile.profile_photo.url }}" class="id-photo-landscape" alt="Student Photo" crossorigin="anonymous">
-                                {% else %}
-                                    <div class="id-photo-landscape">NO PHOTO</div>
-                                {% endif %}
-                                <div class="status-badge-landscape">ACTIVE</div>
-                            </div>
-                            <div class="id-right-landscape">
-                                <div class="id-name-landscape">{{ user.get_full_name|default:user.username }}</div>
-                                <div class="id-number-landscape">ID: {{ profile.id_number|default:user.username }}</div>
-                                <div class="id-divider"></div>
-                                <div class="id-school-landscape">CEBU EASTERN COLLEGE</div>
-                                <div class="id-course-landscape">
-                                    {% if profile.role == 'admin' %}ADMIN{% elif profile.role == 'instructor' %}INSTRUCTOR{% else %}STUDENT{% endif %}
-                                </div>
-                            </div>
+
+                        <div class="pass-right">
+                            <div class="pass-name">{{ user.first_name }} {{ user.last_name|default:user.username }}</div>
+                            <div class="pass-id">ID: {{ profile.id_number }}</div>
+                            
+                            <hr class="pass-divider" style="margin: 12px 0;">
+                            
+                            <div class="pass-school">CEBU EASTERN COLLEGE</div>
+                            <div class="pass-role">{{ profile.role }}</div>
+                        </div>
+                    </div>
+
+                    <div class="pass-footer">
+                        <div class="pass-validity">
+                            <span>VALID UNTIL</span>
+                            <strong>{{ valid_until|default:"MAY 2026" }}</strong>
+                        </div>
+                        <div class="pass-qr">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ qr_url|urlencode }}" style="width: 100%; height: 100%;">
                         </div>
                     </div>
                 </div>
-                <button onclick="downloadID()" class="btn-submit" style="width: 250px; display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--success);">
+
+                <button onclick="downloadID()" class="btn-download">
                     <i class="fa-solid fa-download"></i> Save to Device
                 </button>
             </div>
         </main>
     </div>
+
     <script>
         function downloadID() {
             const cardElement = document.getElementById('capture-id');
-            Swal.fire({ title: 'Preparing ID...', text: 'Generating image', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-            html2canvas(cardElement, { scale: 3, backgroundColor: null, useCORS: true }).then(canvas => {
-                const link = document.createElement('a'); link.href = canvas.toDataURL("image/png");
-                link.download = `CEC_Library_ID_{{ user.username }}.png`; link.click();
-                Swal.fire({ icon: 'success', title: 'Downloaded!', timer: 2000, showConfirmButton: false });
+            Swal.fire({ title: 'Preparing ID...', text: 'Securing your digital pass', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+            html2canvas(cardElement, { scale: 3, backgroundColor: null, useCORS: true, logging: false }).then(canvas => {
+                const link = document.createElement('a'); 
+                link.href = canvas.toDataURL("image/png");
+                link.download = `CEC_Library_Pass_{{ profile.id_number }}.png`; 
+                link.click();
+                Swal.fire({ icon: 'success', title: 'Saved Successfully!', text: 'Check your gallery or downloads.', timer: 3000, showConfirmButton: false });
             });
         }
+
         function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
+        
         const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
         burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
         overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        
         if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
-        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
+        document.getElementById('themeToggle').onclick = () => { 
+            document.body.classList.toggle('dark-mode'); 
+            const isD = document.body.classList.contains('dark-mode'); 
+            localStorage.setItem('theme', isD?'dark':'light'); 
+            document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; 
+        };
     </script>
 </body>
 </html>

@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Verification - CEC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background: #0f172a; color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+        .result-card {
+            background: #1e293b; padding: 30px 20px; border-radius: 16px;
+            width: 90%; max-width: 350px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .icon-circle {
+            width: 80px; height: 80px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; margin: 0 auto 20px auto; color: white;
+        }
+        /* Dynamic Colors */
+        .valid .icon-circle { background: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .invalid .icon-circle { background: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+        
+        .photo {
+            width: 100px; height: 100px; border-radius: 8px; object-fit: cover;
+            border: 3px solid #334155; margin-bottom: 15px;
+        }
+        .name { font-size: 22px; font-weight: 800; margin-bottom: 5px; }
+        .id-num { color: #818cf8; font-family: monospace; font-size: 16px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="result-card {% if status == 'Enrolled' %}valid{% else %}invalid{% endif %}">
+        
+        <div class="icon-circle">
+            {% if status == 'Enrolled' %}
+                <i class="fa-solid fa-check"></i>
+            {% else %}
+                <i class="fa-solid fa-xmark"></i>
+            {% endif %}
+        </div>
+
+        <h2 style="margin: 0 0 20px 0; font-size: 24px;">
+            {% if status == 'Enrolled' %}
+                <span style="color: #10b981;">VERIFIED</span>
+            {% else %}
+                <span style="color: #ef4444;">ACCESS DENIED</span>
+            {% endif %}
+        </h2>
+
+        {% if student %}
+            {% if profile and profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" class="photo">
+            {% else %}
+                <div class="photo" style="background: #334155; display:flex; align-items:center; justify-content:center; margin: 0 auto 15px auto;">
+                    <i class="fa-solid fa-user" style="color: #64748b; font-size: 30px;"></i>
+                </div>
+            {% endif %}
+
+            <div class="name">{{ student.first_name }} {{ student.last_name }}</div>
+            <div class="id-num">ID: {{ student.id_number }}</div>
+            <p style="color: #94a3b8; font-size: 13px; text-transform: uppercase;">{{ student.department }} • {{ status }}</p>
+        {% else %}
+            <p style="color: #94a3b8;">No record found for ID: {{ scanned_id }}</p>
+        {% endif %}
+
+    </div>
+
+    <p style="color: #64748b; font-size: 11px; margin-top: 20px;"><i class="fa-solid fa-shield-halved"></i> CEC Library Security System</p>
+
+</body>
+</html>

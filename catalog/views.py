@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.db import models
@@ -18,6 +18,7 @@ import random
 from django.urls import reverse
 import openpyxl
 from django.contrib import messages
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -388,7 +389,28 @@ CEC Library System"""
 @login_required
 def digital_id(request):
     profile = request.user.userprofile
-    return render(request, 'catalog/digital_id.html', {'profile': profile, 'active_tab': 'digital_id'})
+    
+    try:
+        student_record = EnrolledStudent.objects.get(id_number=profile.id_number)
+        current_status = student_record.enrollment_status
+        enroll_year = student_record.enrollment_year
+    except EnrolledStudent.DoesNotExist:
+        current_status = "Unknown"
+        enroll_year = timezone.now().year
+
+    valid_until = f"May {enroll_year + 1}"
+    
+    # NEW: Create the full live website URL for the QR Code
+    qr_url = request.build_absolute_uri(reverse('verify_student', args=[profile.id_number]))
+
+    context = {
+        'profile': profile,
+        'active_tab': 'digital_id',
+        'status': current_status,
+        'valid_until': valid_until,
+        'qr_url': qr_url, # Pass the full link to the HTML
+    }
+    return render(request, 'catalog/digital_id.html', context)
 
 @login_required
 def admin_user_logs(request):
@@ -693,29 +715,39 @@ def update_meeting_status(request, meeting_id):
 def student_meetings(request):
     if request.user.userprofile.role == 'admin': return redirect('admin_meetings')
         
+    today = timezone.now().date() # Get the current date
+
     if request.method == 'POST':
-        date = request.POST.get('meeting_date')
+        date_str = request.POST.get('meeting_date')
         start = request.POST.get('start_time')
         end = request.POST.get('end_time')
         purpose = request.POST.get('purpose')
         
-        # 1. THE AUTO-REJECT LOGIC (Conflict Check)
-        # Check if an 'Approved' meeting already exists on this date that overlaps with these times
+        # ----------------------------------------------------
+        # NEW LOGIC 1: PAST DATE VALIDATION
+        # ----------------------------------------------------
+        submitted_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        
+        if submitted_date < today:
+            messages.error(request, "Invalid Date: You cannot book a meeting in the past.")
+            return redirect('student_meetings')
+            
+        # ----------------------------------------------------
+        # LOGIC 2: CONFLICT CHECK (Your existing logic)
+        # ----------------------------------------------------
         conflicts = Meeting.objects.filter(
-            meeting_date=date,
+            meeting_date=date_str,
             status='Approved',
-            start_time__lt=end, # New meeting ends AFTER existing meeting starts
-            end_time__gt=start  # New meeting starts BEFORE existing meeting ends
+            start_time__lt=end, 
+            end_time__gt=start  
         )
         
         if conflicts.exists():
-            # Time slot is taken! Tell the student.
             messages.error(request, "This time slot is already booked by someone else.")
         else:
-            # Time slot is free! Save the pending request.
             Meeting.objects.create(
                 student=request.user,
-                meeting_date=date,
+                meeting_date=date_str,
                 start_time=start,
                 end_time=end,
                 purpose=purpose,
@@ -725,14 +757,50 @@ def student_meetings(request):
             
         return redirect('student_meetings')
 
-    # Fetch this specific student's appointments to show on the right side of the screen
+    # Fetch this specific student's appointments
     my_appointments = Meeting.objects.filter(student=request.user).order_by('-meeting_date', '-start_time')
+
+    # Fetch Taken Time slots
+    booked_slots = Meeting.objects.filter(
+        status='Approved', 
+        meeting_date__gte=today
+    ).order_by('meeting_date', 'start_time')
 
     context = {
         'profile': request.user.userprofile,
         'active_tab': 'meetings',
-        'appointments': my_appointments
+        'appointments': my_appointments,
+        'booked_slots': booked_slots,
+        'today_string': today.strftime('%Y-%m-%d') # <-- NEW: Pass today's date to HTML
     }
     return render(request, 'catalog/student_meetings.html', context)
 
+
+def verify_student(request, id_number):
+    """
+    Public verification page for when a QR code is scanned.
+    """
+    try:
+        # Check Masterlist first for official status
+        student = EnrolledStudent.objects.get(id_number=id_number)
+        status = student.enrollment_status
+        
+        # Try to get their profile photo if they have activated their account
+        try:
+            profile = UserProfile.objects.get(id_number=id_number)
+        except UserProfile.DoesNotExist:
+            profile = None
+            
+    except EnrolledStudent.DoesNotExist:
+        student = None
+        status = "Invalid"
+        profile = None
+
+    context = {
+        'student': student,
+        'status': status,
+        'profile': profile,
+        'scanned_id': id_number
+    }
+    return render(request, 'catalog/verify_student.html', context)
 
