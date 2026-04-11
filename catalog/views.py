@@ -391,24 +391,28 @@ def digital_id(request):
     profile = request.user.userprofile
     
     try:
+        # Fetch their official status
         student_record = EnrolledStudent.objects.get(id_number=profile.id_number)
         current_status = student_record.enrollment_status
-        enroll_year = student_record.enrollment_year
     except EnrolledStudent.DoesNotExist:
         current_status = "Unknown"
-        enroll_year = timezone.now().year
 
-    valid_until = f"May {enroll_year + 1}"
+    # ==========================================
+    # NEW REAL-TIME VALIDATION LOGIC
+    # ==========================================
+    today = timezone.now()
+    next_year_date = today + timedelta(days=365) # Adds exactly 1 year to the present day
+    valid_until = next_year_date.strftime("%B %Y").upper() # Formats it to look like "APRIL 2027"
     
-    # NEW: Create the full live website URL for the QR Code
+    # Generate the live QR Code URL
     qr_url = request.build_absolute_uri(reverse('verify_student', args=[profile.id_number]))
 
     context = {
         'profile': profile,
         'active_tab': 'digital_id',
         'status': current_status,
-        'valid_until': valid_until,
-        'qr_url': qr_url, # Pass the full link to the HTML
+        'valid_until': valid_until, # Passing the dynamic date to the HTML
+        'qr_url': qr_url,
     }
     return render(request, 'catalog/digital_id.html', context)
 

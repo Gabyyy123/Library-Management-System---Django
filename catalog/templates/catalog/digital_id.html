@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <style>
-        /* * DIGITAL WALLET PASS STYLE */
+        /* --- 3D FLIP CONTAINER --- */
         .id-container {
             display: flex;
             flex-direction: column;
@@ -23,20 +23,59 @@
             width: 100%;
         }
 
-        .pass-card {
+        .flip-scene {
+            width: 100%;
+            max-width: 400px;
+            height: 250px; /* Fixed height is required for 3D faces */
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-radius: 16px;
+        }
+
+        .card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* --- SHARED CARD FACE STYLING --- */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari Support */
             background: linear-gradient(145deg, #2a164d 0%, #111827 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 20px;
-            width: 100%;
-            max-width: 400px;
+            box-sizing: border-box;
             color: white;
             font-family: 'Inter', sans-serif;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            position: relative;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* --- FRONT OF CARD --- */
+        .card-front {
+            /* Standard Front Details */
+        }
+
+        /* --- BACK OF CARD --- */
+        .card-back {
+            transform: rotateY(180deg);
+            align-items: center;
+        }
+
+        /* --- INNER ELEMENTS --- */
         .pass-header {
             display: flex;
             justify-content: space-between;
@@ -44,19 +83,22 @@
             font-size: 14px;
             font-weight: 800;
             letter-spacing: 1px;
+            width: 100%;
         }
 
         .pass-divider {
             height: 1px;
             background: rgba(255, 255, 255, 0.1);
-            margin: 15px 0;
+            margin: 12px 0;
             border: none;
+            width: 100%;
         }
 
         .pass-body {
             display: flex;
             gap: 20px;
             align-items: flex-start;
+            width: 100%;
         }
 
         .pass-left {
@@ -90,11 +132,14 @@
             letter-spacing: 0.5px;
         }
 
+        /* Dynamic Status Colors mapped to the flip-scene wrapper */
         .status-enrolled .pass-photo { border: 2px solid #10b981; }
         .status-enrolled .pass-badge { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-enrolled .validity-text strong { color: #10b981; }
         
         .status-dropped .pass-photo { border: 2px solid #ef4444; }
         .status-dropped .pass-badge { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-dropped .validity-text strong { color: #ef4444; }
 
         .pass-right {
             flex-grow: 1;
@@ -124,6 +169,7 @@
             font-weight: 800;
             letter-spacing: 0.5px;
             margin-bottom: 3px;
+            margin-top: 15px;
         }
 
         .pass-role {
@@ -132,36 +178,35 @@
             text-transform: uppercase;
         }
 
+        .pass-qr-large {
+            width: 100px;
+            height: 100px;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
         .pass-footer {
-            margin-top: 20px;
+            margin-top: auto;
             border-top: 1px dashed rgba(255, 255, 255, 0.15);
-            padding-top: 15px;
+            padding-top: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
 
-        .pass-validity span {
+        .validity-text span {
             font-size: 9px;
             color: #94a3b8;
             text-transform: uppercase;
         }
 
-        .pass-validity strong {
+        .validity-text strong {
             display: block;
             font-size: 12px;
             margin-top: 2px;
-        }
-
-        .status-enrolled .pass-validity strong { color: #10b981; }
-        .status-dropped .pass-validity strong { color: #ef4444; }
-
-        .pass-qr {
-            width: 55px;
-            height: 55px;
-            background: white;
-            padding: 4px;
-            border-radius: 6px;
         }
 
         .btn-download {
@@ -179,14 +224,20 @@
             gap: 10px;
             width: 100%;
             max-width: 400px;
-            margin-top: 20px;
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
             transition: background 0.2s;
         }
 
-        .btn-download:hover {
-            background: #059669;
+        .btn-download:hover { background: #059669; }
+
+        /* Icon Tweaks */
+        #themeToggle {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; cursor: pointer; border-radius: 50%;
+            transition: background 0.2s;
         }
+        #themeToggle:hover { background: rgba(255, 255, 255, 0.05); }
+        #tIcon { font-size: 16px !important; line-height: 1; }
     </style>
 </head>
 <body class="{% if profile.role == 'admin' %}admin-mode{% endif %}">
@@ -216,7 +267,6 @@
                 <a href="{% url 'browse_library' %}" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i> Browse</a>
                 <a href="{% url 'student_meetings' %}" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             {% endif %}
-            
             <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
             <a href="{% url 'digital_id' %}" class="nav-link active"><i class="fa-solid fa-id-card"></i> Digital ID</a>
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
@@ -232,56 +282,71 @@
                     <p style="margin:2px 0 0 0; color:var(--text-secondary); font-size:13px;">Your CEC Library Pass.</p>
                 </div>
             </div>
-            
-            <div id="themeToggle" class="theme-switch"><span class="theme-slider" id="tIcon">☀️</span></div>
+            <div id="themeToggle" class="theme-switch"><span id="tIcon">☀️</span></div>
         </header>
 
         <main class="scrollable-content">
             <div class="id-container">
                 
-                <div id="capture-id" class="pass-card {% if status == 'Enrolled' %}status-enrolled{% else %}status-dropped{% endif %}">
+                <div class="flip-scene {% if status == 'Enrolled' %}status-enrolled{% else %}status-dropped{% endif %}" onclick="document.getElementById('card-inner').classList.toggle('is-flipped')">
                     
-                    <div class="pass-header">
-                        <span>CEC LIBRARY PASS</span>
-                        <i class="fa-solid fa-wifi" style="opacity: 0.8;"></i>
-                    </div>
-                    
-                    <hr class="pass-divider">
-                    
-                    <div class="pass-body">
-                        <div class="pass-left">
-                            {% if profile.profile_photo %}
-                                <img src="{{ profile.profile_photo.url }}" class="pass-photo" crossorigin="anonymous">
-                            {% else %}
-                                <div class="pass-photo">NO PHOTO</div>
-                            {% endif %}
-                            
-                            <div class="pass-badge">
-                                {{ status|default:"ACTIVE" }}
+                    <div class="card-inner" id="card-inner">
+                        
+                        <div class="card-face card-front" id="export-front">
+                            <div class="pass-header">
+                                <span>CEC LIBRARY PASS</span>
+                                <i class="fa-solid fa-wifi" style="opacity: 0.8;"></i>
+                            </div>
+                            <hr class="pass-divider">
+                            <div class="pass-body">
+                                <div class="pass-left">
+                                    {% if profile.profile_photo %}
+                                        <img src="{{ profile.profile_photo.url }}" class="pass-photo" crossorigin="anonymous">
+                                    {% else %}
+                                        <div class="pass-photo">NO PHOTO</div>
+                                    {% endif %}
+                                    <div class="pass-badge">{{ status|default:"ACTIVE" }}</div>
+                                </div>
+                                <div class="pass-right">
+                                    <div class="pass-name">{{ user.first_name }} {{ user.last_name|default:user.username }}</div>
+                                    <div class="pass-id">ID: {{ profile.id_number }}</div>
+                                    <div class="pass-school">CEBU EASTERN COLLEGE</div>
+                                    <div class="pass-role">{{ profile.role }}</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="pass-right">
-                            <div class="pass-name">{{ user.first_name }} {{ user.last_name|default:user.username }}</div>
-                            <div class="pass-id">ID: {{ profile.id_number }}</div>
+                        <div class="card-face card-back" id="export-back">
+                            <div class="pass-header">
+                                <span>SCAN TO VERIFY</span>
+                                <i class="fa-solid fa-qrcode" style="opacity: 0.8;"></i>
+                            </div>
+                            <hr class="pass-divider">
                             
-                            <hr class="pass-divider" style="margin: 12px 0;">
-                            
-                            <div class="pass-school">CEBU EASTERN COLLEGE</div>
-                            <div class="pass-role">{{ profile.role }}</div>
-                        </div>
-                    </div>
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <div class="pass-qr-large">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ qr_url|urlencode }}" style="width: 100%; height: 100%;">
+                                </div>
+                                <span style="font-size: 11px; color: #818cf8; font-weight: bold; letter-spacing: 1px; margin-top: 5px;">{{ profile.id_number }}</span>
+                            </div>
 
-                    <div class="pass-footer">
-                        <div class="pass-validity">
-                            <span>VALID UNTIL</span>
-                            <strong>{{ valid_until|default:"MAY 2026" }}</strong>
+                            <div class="pass-footer">
+                                <div class="validity-text">
+                                    <span>VALID UNTIL</span>
+                                    <strong>{{ valid_until }}</strong>
+                                </div>
+                                <div style="color: #94a3b8; font-size: 10px;">
+                                    <i class="fa-solid fa-shield-halved"></i> SECURED BY CEC-IT
+                                </div>
+                            </div>
                         </div>
-                        <div class="pass-qr">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ qr_url|urlencode }}" style="width: 100%; height: 100%;">
-                        </div>
+
                     </div>
                 </div>
+
+                <p style="color: #64748b; font-size: 11px; margin-bottom: 20px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">
+                    <i class="fa-solid fa-hand-pointer"></i> Tap card to flip
+                </p>
 
                 <button onclick="downloadID()" class="btn-download">
                     <i class="fa-solid fa-download"></i> Save to Device
@@ -292,31 +357,57 @@
 
     <script>
         function downloadID() {
-            const cardElement = document.getElementById('capture-id');
-            Swal.fire({ title: 'Preparing ID...', text: 'Securing your digital pass', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+            Swal.fire({ title: 'Preparing ID...', text: 'Capturing front and back...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
-            html2canvas(cardElement, { scale: 3, backgroundColor: null, useCORS: true, logging: false }).then(canvas => {
+            // 1. Create a temporary off-screen container
+            const exportContainer = document.createElement('div');
+            exportContainer.style.position = 'absolute';
+            exportContainer.style.left = '-9999px';
+            exportContainer.style.background = '#0f172a';
+            exportContainer.style.padding = '30px';
+            exportContainer.style.display = 'flex';
+            exportContainer.style.flexDirection = 'column'; // Stack front on top of back
+            exportContainer.style.gap = '20px';
+            exportContainer.style.borderRadius = '20px';
+            
+            // 2. Apply status classes to the container so colors render correctly
+            const isEnrolled = document.querySelector('.flip-scene').classList.contains('status-enrolled');
+            exportContainer.classList.add(isEnrolled ? 'status-enrolled' : 'status-dropped');
+
+            // 3. Clone the front and back faces
+            const frontClone = document.getElementById('export-front').cloneNode(true);
+            const backClone = document.getElementById('export-back').cloneNode(true);
+
+            // 4. Flatten them into 2D objects so HTML2Canvas can read them
+            [frontClone, backClone].forEach(clone => {
+                clone.style.position = 'relative';
+                clone.style.transform = 'none';
+                clone.style.width = '400px';
+                clone.style.height = '250px';
+                exportContainer.appendChild(clone);
+            });
+
+            document.body.appendChild(exportContainer);
+
+            // 5. Render the combined image
+            html2canvas(exportContainer, { scale: 3, backgroundColor: '#0f172a', useCORS: true, logging: false }).then(canvas => {
                 const link = document.createElement('a'); 
                 link.href = canvas.toDataURL("image/png");
-                link.download = `CEC_Library_Pass_{{ profile.id_number }}.png`; 
+                link.download = `CEC_Library_Pass_${new Date().getTime()}.png`; 
                 link.click();
-                Swal.fire({ icon: 'success', title: 'Saved Successfully!', text: 'Check your gallery or downloads.', timer: 3000, showConfirmButton: false });
+                
+                document.body.removeChild(exportContainer); // Cleanup
+                Swal.fire({ icon: 'success', title: 'Saved Successfully!', text: 'Both sides saved to your device.', timer: 3000, showConfirmButton: false });
             });
         }
 
+        // Standard logic
         function confirmAction(e, t, s, cT, cC) { e.preventDefault(); const url = e.currentTarget.href; Swal.fire({ title: t, text: s, icon: 'question', showCancelButton: true, confirmButtonColor: cC, confirmButtonText: cT }).then((r) => { if(r.isConfirmed) window.location.href = url; }); }
-        
         const burger = document.getElementById('burger'); const sidebar = document.getElementById('sidebar'); const overlay = document.getElementById('overlay');
         burger.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('active'); };
         overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
-        
         if(localStorage.getItem('theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('tIcon').innerText = '🌙'; }
-        document.getElementById('themeToggle').onclick = () => { 
-            document.body.classList.toggle('dark-mode'); 
-            const isD = document.body.classList.contains('dark-mode'); 
-            localStorage.setItem('theme', isD?'dark':'light'); 
-            document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; 
-        };
+        document.getElementById('themeToggle').onclick = () => { document.body.classList.toggle('dark-mode'); const isD = document.body.classList.contains('dark-mode'); localStorage.setItem('theme', isD?'dark':'light'); document.getElementById('tIcon').innerText = isD?'🌙':'☀️'; };
     </script>
 </body>
 </html>
