@@ -258,6 +258,18 @@ def request_pc(request, pc_id):
             pc.status = 'Requested'
             pc.current_user = request.user
             pc.save()
+            
+            # =========================================================
+            # NEW: Notify all Admins that a student wants a PC!
+            # =========================================================
+            admins = User.objects.filter(userprofile__role='admin')
+            for admin in admins:
+                Notification.objects.create(
+                    recipient=admin,
+                    message=f"New PC request from {request.user.first_name} for {pc.name}.",
+                    target_url=reverse('admin_pcs')
+                )
+                
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 @login_required
@@ -267,26 +279,69 @@ def approve_pc(request, pc_id):
         if pc.status == 'Requested':
             pc.status = 'In Use'
             pc.time_started = timezone.now()
+            
+            # Grab the user BEFORE saving
+            student_to_notify = pc.current_user 
             pc.save()
+            
+            # =========================================================
+            # NEW: Notify the Student that they can use the PC!
+            # =========================================================
+            if student_to_notify:
+                Notification.objects.create(
+                    recipient=student_to_notify,
+                    message=f"Your request for {pc.name} has been APPROVED.",
+                    target_url=reverse('dashboard')
+                )
+                
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 @login_required
 def reject_pc(request, pc_id):
     if request.user.userprofile.role == 'admin':
         pc = get_object_or_404(Computer, id=pc_id)
+        
+        # CRITICAL: We MUST grab the user before we clear them from the PC!
+        student_to_notify = pc.current_user 
+        
         pc.status = 'Available'
         pc.current_user = None
         pc.save()
+        
+        # =========================================================
+        # NEW: Notify the Student they were rejected
+        # =========================================================
+        if student_to_notify:
+            Notification.objects.create(
+                recipient=student_to_notify,
+                message=f"Your request for {pc.name} has been REJECTED.",
+                target_url=reverse('dashboard')
+            )
+            
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 @login_required
 def stop_pc(request, pc_id):
     if request.user.userprofile.role == 'admin':
         pc = get_object_or_404(Computer, id=pc_id)
+        
+        student_to_notify = pc.current_user 
+        
         pc.status = 'Available'
         pc.current_user = None
         pc.time_started = None
         pc.save()
+        
+        # =========================================================
+        # NEW: Notify the Student that their session was ended
+        # =========================================================
+        if student_to_notify:
+            Notification.objects.create(
+                recipient=student_to_notify,
+                message=f"Your session on {pc.name} has been ended by the Admin.",
+                target_url=reverse('dashboard')
+            )
+            
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 @login_required
