@@ -29,7 +29,7 @@
                 {% endif %}
             </h2>
             
-            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+            <p style="color: #f8fafc; margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
 
         <div class="sidebar-nav-container">
@@ -97,12 +97,11 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <label style="font-weight:bold; margin-bottom:8px; display:block;">First Name <span style="color:var(--danger);">*</span></label>
-                                <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input" required>
+                                <input type="text" name="first_name" value="{{ user.first_name }}" readonly style="background-color: #e2e8f0; cursor: not-allowed;">
                             </div>
                             <div>
                                 <label style="font-weight:bold; margin-bottom:8px; display:block;">Last Name <span style="color:var(--danger);">*</span></label>
-                                <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input" required>
-                            </div>
+                                <input type="text" name="last_name" value="{{ user.last_name }}" readonly style="background-color: #e2e8f0; cursor: not-allowed;">                            </div>
                         </div>
 
                         <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Institution ID</label>

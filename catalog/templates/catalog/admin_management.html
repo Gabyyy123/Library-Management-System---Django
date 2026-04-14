@@ -33,7 +33,7 @@
             {% endif %}
             
             {% if profile.role == 'admin' %}
-                <h2 style="margin: 0; font-size: 18px;">
+               <h2 style="margin: 0; font-size: 18px; color: #f8fafc;">
     {% if user.first_name or user.last_name %}
         {{ user.first_name }} {{ user.last_name }}
     {% else %}
@@ -41,7 +41,7 @@
     {% endif %}
 </h2>
             {% else %}
-               <h2 style="margin: 0; font-size: 18px;">
+              <h2 style="margin: 0; font-size: 18px; color: #f8fafc;">
     {% if user.first_name or user.last_name %}
         {{ user.first_name }} {{ user.last_name }}
     {% else %}
@@ -50,7 +50,7 @@
 </h2>
             {% endif %}
             
-            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+            <p style="color: #f8fafc; margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
         
         <div class="sidebar-nav-container">

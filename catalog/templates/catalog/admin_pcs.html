@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="refresh" content="30">
     <title>PC Stations</title>
     
     <!-- External Scripts & Fonts -->
@@ -19,14 +18,14 @@
     <div class="sidebar" id="sidebar">
         <div class="profile-section">
             {% if profile.profile_photo %}<img src="{{ profile.profile_photo.url }}" class="profile-photo">{% else %}<div class="profile-photo" style="background: var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); width:90px; height:90px; border-radius:50%; margin:0 auto 15px auto;">No IMG</div>{% endif %}
-            <h2 style="margin: 0; font-size: 18px;">
+           <h2 style="margin: 0; font-size: 18px; color: #f8fafc;">
     {% if user.first_name or user.last_name %}
         {{ user.first_name }} {{ user.last_name }}
     {% else %}
         {{ user.username }}
     {% endif %}
 </h2>
-            <p style="color: var(--text-secondary); margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
+            <p style="color: #f8fafc; margin: 5px 0 0 0; font-size: 13px;">ID: {{ profile.id_number|default:"Not Set" }}</p>
         </div>
         <div class="sidebar-nav-container">
             <a href="{% url 'dashboard' %}" class="nav-link"><i class="fa-solid fa-book"></i> Borrows</a>
