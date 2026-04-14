@@ -49,8 +49,12 @@
                 <a href="{% url 'student_meetings' %}" class="nav-link {% if active_tab == 'meetings' %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Meetings</a>
             {% endif %}
             
+            
             <a href="{% url 'edit_profile' %}" class="nav-link active"><i class="fa-solid fa-user-gear"></i> Profile</a>
-            <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+            
+           {% if profile.role != 'admin' %}
+    <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+{% endif %}
             
             <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger); margin-top: 10px;" onclick="confirmAction(event, 'Logout?', 'Quit?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>

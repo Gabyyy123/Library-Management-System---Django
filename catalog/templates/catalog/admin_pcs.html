@@ -40,8 +40,10 @@
 <a href="{% url 'admin_masterlist' %}" class="nav-link"><i class="fa-solid fa-users-viewfinder"></i> Masterlist</a>
                         <a href="{% url 'edit_profile' %}" class="nav-link"><i class="fa-solid fa-user-gear"></i> Profile</a>
 
-            <!-- NEW DIGITAL ID LINK ADDED HERE -->
-            <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+           {% if profile.role != 'admin' %}
+    <a href="{% url 'digital_id' %}" class="nav-link"><i class="fa-solid fa-id-card"></i> Digital ID</a>
+{% endif %}
+
             <a href="{% url 'logout' %}" class="nav-link" style="color:#fca5a5; margin-top:10px;" onclick="confirmAction(event, 'Logout?', 'End session?', 'Yes', '#ef4444')"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>

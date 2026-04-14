@@ -408,18 +408,28 @@ CEC Library System"""
 @login_required
 def digital_id(request):
     profile = request.user.userprofile
+
+    # Admin Security Gate: Keep admins out of the Digital ID page
+    if profile.role == 'admin':
+        return redirect('dashboard')
+    
+    # NEW FIX: Strip any accidental whitespace from the ID number
+    clean_id = profile.id_number.strip() if profile.id_number else ""
     
     try:
-        student_record = EnrolledStudent.objects.get(id_number=profile.id_number)
+        # Search using the cleaned ID
+        student_record = EnrolledStudent.objects.get(id_number=clean_id)
         current_status = student_record.enrollment_status
     except EnrolledStudent.DoesNotExist:
+        # If the cleaned ID STILL doesn't match the masterlist, mark as Unknown
         current_status = "Unknown"
 
     today = timezone.now()
     next_year_date = today + timedelta(days=365) 
     valid_until = next_year_date.strftime("%B %Y").upper() 
     
-    qr_url = request.build_absolute_uri(reverse('verify_student', args=[profile.id_number]))
+    # Pass the clean_id to the QR code so the link works perfectly
+    qr_url = request.build_absolute_uri(reverse('verify_student', args=[clean_id]))
 
     context = {
         'profile': profile,
