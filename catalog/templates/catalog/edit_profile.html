@@ -91,31 +91,43 @@
             <div style="display: flex; flex-direction: column; gap: 30px; align-items: center; width: 100%; max-width: 500px;">
                 
                 <div class="card profile-form-card" style="width: 100%; margin: 0;">
-                    <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" onsubmit="confirmSubmit(event, this, 'Save?', 'Update details?', 'Save', '#4f46e5')">
-                        {% csrf_token %}
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label style="font-weight:bold; margin-bottom:8px; display:block;">First Name <span style="color:var(--danger);">*</span></label>
-                                <input type="text" name="first_name" value="{{ user.first_name }}" readonly style="background-color: #e2e8f0; cursor: not-allowed;">
-                            </div>
-                            <div>
-                                <label style="font-weight:bold; margin-bottom:8px; display:block;">Last Name <span style="color:var(--danger);">*</span></label>
-                                <input type="text" name="last_name" value="{{ user.last_name }}" readonly style="background-color: #e2e8f0; cursor: not-allowed;">                            </div>
-                        </div>
-
-                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Institution ID</label>
-                        <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
-                        
-                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>
-                        <input type="email" name="email" value="{{ user.email|default:'' }}" class="form-input" placeholder="Enter an active email for notifications" required>
-                        
-                        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Profile Photo</label>
-                        <input type="file" name="profile_photo" class="form-input" style="padding: 10px;">
-                        
-                        <button type="submit" class="btn-submit">Save Changes</button>
-                    </form>
+    <form method="POST" action="{% url 'edit_profile' %}" enctype="multipart/form-data" onsubmit="confirmSubmit(event, this, 'Save?', 'Update details?', 'Save', '#4f46e5')">
+        {% csrf_token %}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            {% if user.userprofile.role == 'admin' or user.userprofile.role == 'admin_librarian' %}
+                <div>
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">First Name <span style="color:var(--danger);">*</span></label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input">
                 </div>
+                <div>
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">Last Name <span style="color:var(--danger);">*</span></label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input">                            
+                </div>
+            {% else %}
+                <div>
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">First Name (Locked) <span style="color:var(--danger);">*</span></label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="form-input" readonly style="background-color: #888a8d; cursor: not-allowed;">
+                </div>
+                <div>
+                    <label style="font-weight:bold; margin-bottom:8px; display:block;">Last Name (Locked) <span style="color:var(--danger);">*</span></label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="form-input" readonly style="background-color: #888a8d; cursor: not-allowed;">                            
+                </div>
+            {% endif %}
+        </div>
+
+        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Institution ID</label>
+        <input type="text" name="id_number" value="{{ profile.id_number }}" class="form-input" required>
+        
+        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Email Address <span style="color:var(--danger);">*</span></label>
+        <input type="email" name="email" value="{{ user.email|default:'' }}" class="form-input" placeholder="Enter an active email for notifications" required>
+        
+        <label style="font-weight:bold; margin-top:15px; margin-bottom:8px; display:block;">Profile Photo</label>
+        <input type="file" name="profile_photo" class="form-input" style="padding: 10px;">
+        
+        <button type="submit" class="btn-submit">Save Changes</button>
+    </form>
+</div>
 
                 <div class="card profile-form-card" style="width: 100%; margin: 0;">
                     <h2 style="margin-top:0; font-size: 20px;"><i class="fa-solid fa-lock"></i> Change Password</h2>
