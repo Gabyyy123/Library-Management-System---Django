@@ -373,7 +373,7 @@ def send_daily_reminders(request):
     tomorrow = timezone.now().date() + timedelta(days=1)
     
     # 2. ADDED __date HERE to ignore hours and minutes!
-    due_tomorrow_records = BorrowRecord.objects.filter(is_returned=False, due_date__date=tomorrow)
+    due_tomorrow_records = BorrowRecord.objects.filter(is_returned=False, due_date=tomorrow)
     
     emails_sent = 0
     for record in due_tomorrow_records:
