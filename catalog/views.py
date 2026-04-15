@@ -259,9 +259,7 @@ def request_pc(request, pc_id):
             pc.current_user = request.user
             pc.save()
             
-            # =========================================================
-            # NEW: Notify all Admins that a student wants a PC!
-            # =========================================================
+            
             admins = User.objects.filter(userprofile__role='admin')
             for admin in admins:
                 Notification.objects.create(
@@ -280,13 +278,11 @@ def approve_pc(request, pc_id):
             pc.status = 'In Use'
             pc.time_started = timezone.now()
             
-            # Grab the user BEFORE saving
+          
             student_to_notify = pc.current_user 
             pc.save()
             
-            # =========================================================
-            # NEW: Notify the Student that they can use the PC!
-            # =========================================================
+            
             if student_to_notify:
                 Notification.objects.create(
                     recipient=student_to_notify,
@@ -301,16 +297,13 @@ def reject_pc(request, pc_id):
     if request.user.userprofile.role == 'admin':
         pc = get_object_or_404(Computer, id=pc_id)
         
-        # CRITICAL: We MUST grab the user before we clear them from the PC!
         student_to_notify = pc.current_user 
         
         pc.status = 'Available'
         pc.current_user = None
         pc.save()
         
-        # =========================================================
-        # NEW: Notify the Student they were rejected
-        # =========================================================
+      
         if student_to_notify:
             Notification.objects.create(
                 recipient=student_to_notify,
@@ -332,9 +325,7 @@ def stop_pc(request, pc_id):
         pc.time_started = None
         pc.save()
         
-        # =========================================================
-        # NEW: Notify the Student that their session was ended
-        # =========================================================
+       
         if student_to_notify:
             Notification.objects.create(
                 recipient=student_to_notify,
@@ -378,16 +369,22 @@ def reset_password(request):
     return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
 
 def send_daily_reminders(request):
-    tomorrow = date.today() + timedelta(days=1)
+    # 1. Use timezone to match Render's clock perfectly
+    tomorrow = timezone.now().date() + timedelta(days=1)
     
-    due_tomorrow_records = BorrowRecord.objects.filter(is_returned=False, due_date=tomorrow)
+    # 2. ADDED __date HERE to ignore hours and minutes!
+    due_tomorrow_records = BorrowRecord.objects.filter(is_returned=False, due_date__date=tomorrow)
     
     emails_sent = 0
     for record in due_tomorrow_records:
         student_email = record.user.userprofile.email
         if student_email:
             subject = f"Library Reminder: '{record.book.title}' is due tomorrow!"
-            message = f"""Hello {record.user.username},
+            
+            # Using record.user.first_name if they have one, otherwise username
+            name_to_use = record.user.first_name if record.user.first_name else record.user.username
+            
+            message = f"""Hello {name_to_use},
 
 This is an automated reminder from the Library System.
 
@@ -413,15 +410,12 @@ def digital_id(request):
     if profile.role == 'admin':
         return redirect('dashboard')
     
-    # NEW FIX: Strip any accidental whitespace from the ID number
     clean_id = profile.id_number.strip() if profile.id_number else ""
     
     try:
-        # Search using the cleaned ID
         student_record = EnrolledStudent.objects.get(id_number=clean_id)
         current_status = student_record.enrollment_status
     except EnrolledStudent.DoesNotExist:
-        # If the cleaned ID STILL doesn't match the masterlist, mark as Unknown
         current_status = "Unknown"
 
     today = timezone.now()
